@@ -1,0 +1,134 @@
+version: '3.9'
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    container_name: antarvik-db
+    restart: unless-stopped
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_DB: antarvik
+      POSTGRES_USER: antarvik
+      POSTGRES_PASSWORD: antarvik
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -U antarvik -d antarvik
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+    - antarvik-net
+  redis:
+    image: redis:7-alpine
+    container_name: antarvik-redis
+    restart: unless-stopped
+    ports:
+    - 6379:6379
+    healthcheck:
+      test:
+      - CMD
+      - redis-cli
+      - ping
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+    - antarvik-net
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: antarvik-mqtt
+    restart: unless-stopped
+    ports:
+    - 1883:1883
+    - 9001:9001
+    volumes:
+    - ./mosquitto/config:/mosquitto/config
+    - mosquitto-data:/mosquitto/data
+    - mosquitto-log:/mosquitto/log
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - mosquitto_sub -t '$$SYS/#' -C 1 -i healthcheck -W 3 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+    - antarvik-net
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: antarvik-backend
+    restart: unless-stopped
+    ports:
+    - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+    environment:
+    - DATABASE_URL=postgresql+asyncpg://antarvik:antarvik@db:5432/antarvik
+    - REDIS_URL=redis://redis:6379/0
+    - MQTT_BROKER=mqtt
+    - MQTT_PORT=1883
+    - JWT_SECRET=antarvik-secret-key-change-in-production
+    - ENVIRONMENT=development
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+    - ./backend:/app
+    networks:
+    - antarvik-net
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: antarvik-frontend
+    restart: unless-stopped
+    ports:
+    - 5173:5173
+    depends_on:
+    - backend
+    environment:
+    - VITE_API_URL=http://localhost:8000
+    - VITE_WS_URL=ws://localhost:9001
+    - VITE_MQTT_URL=ws://localhost:9001/mqtt
+    command: npm run dev -- --host 0.0.0.0
+    volumes:
+    - ./frontend:/app
+    - /app/node_modules
+    networks:
+    - antarvik-net
+  simulator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: antarvik-simulator
+    restart: unless-stopped
+    depends_on:
+      mqtt:
+        condition: service_started
+    environment:
+    - MQTT_BROKER=mqtt
+    - MQTT_PORT=1883
+    - ENVIRONMENT=development
+    command: bash -c "PYTHONPATH=/app python app/scripts/run_simulation.py"
+    volumes:
+    - ./backend:/app
+    networks:
+    - antarvik-net
+volumes:
+  pgdata:
+    driver: local
+  mosquitto-data:
+    driver: local
+  mosquitto-log:
+    driver: local
+networks:
+  antarvik-net:
+    driver: bridge

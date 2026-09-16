@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maitri Digital Twin</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow">ANTARCTIC DIGITAL TWIN</div>
+        <h1>MAITRI RESEARCH STATION</h1>
+      </div>
+      <div class="online"><span></span> STATION ONLINE</div>
+    </div>
+
+    <div class="controls">
+      <button id="overview">Overview</button>
+      <button id="topView">Top View</button>
+      <button id="reset">Reset Camera</button>
+      <button id="labels">Labels</button>
+    </div>
+
+    <div id="info" class="info hidden">
+      <button id="closeInfo" class="close">×</button>
+      <div class="tag" id="infoType">INFRASTRUCTURE</div>
+      <h2 id="infoName">Generator 01</h2>
+      <div class="status" id="infoStatus">OPERATIONAL</div>
+      <div class="metrics" id="infoMetrics"></div>
+    </div>
+
+    <div class="legend">
+      <div><i class="green"></i>Operational</div>
+      <div><i class="yellow"></i>Warning</div>
+      <div><i class="red"></i>Critical</div>
+      <div><i class="blue"></i>Communication</div>
+    </div>
+
+    <div id="hint">Drag to rotate · Scroll to zoom · Click equipment</div>
+    <div id="canvas"></div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
