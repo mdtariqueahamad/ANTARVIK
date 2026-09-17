@@ -1,11 +1,17 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import StationOverview from './components/dashboard/StationOverview';
+import StationOverview, { subscribeNotifications, NotifRow } from './components/dashboard/StationOverview';
+import type { Notification } from './components/dashboard/StationOverview';
 import DigitalTwinView from './components/dashboard/DigitalTwinView';
-import { PredictionsView, AlertsView } from './components/dashboard/PlaceholderViews';
+import IncidentCommand from './pages/IncidentCommand';
+import SensorCalibration from './pages/SensorCalibration';
+import ScenarioSimulator from './pages/ScenarioSimulator';
 import Login from './pages/Login';
 import { useStationStore } from './hooks/useStationStore';
-import { Building2, Snowflake, Wind, LogOut, ChevronDown, Menu, Activity, Shield, AlertTriangle } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import {
+  Building2, Snowflake, Wind, LogOut, ChevronDown, Menu, Activity,
+  AlertTriangle, Bell, CheckCircle, LayoutDashboard, X, Box, ShieldAlert, Cpu
+} from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 import FloatingChatbot from './components/common/FloatingChatbot';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -14,7 +20,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   return children;
 };
 
-// Gateway Page
+// ─── Gateway ──────────────────────────────────────────────────────────────────
 const GatewayPage = () => {
   const { setStation } = useStationStore();
   const navigate = useNavigate();
@@ -25,8 +31,9 @@ const GatewayPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center p-6 relative" style={{ backgroundImage: "url('/background.png')" }}>
-      <div className="absolute inset-0 bg-slate-900/40 z-0"></div>
+    <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center p-6 relative"
+      style={{ backgroundImage: "url('/background.png')" }}>
+      <div className="absolute inset-0 bg-slate-900/40 z-0" />
       <div className="relative z-10 text-center mb-10">
         <div className="inline-flex items-center justify-center p-3 bg-white/5 backdrop-blur-md rounded-full mb-4 border border-white/10 shadow-lg">
           <Building2 className="w-6 h-6 text-blue-300" />
@@ -34,24 +41,24 @@ const GatewayPage = () => {
         <h1 className="text-2xl font-black text-white tracking-widest mb-2 drop-shadow-md">NCPOR CENTRAL COMMAND</h1>
         <p className="text-white/70 text-xs tracking-wide">Select a target research station to monitor</p>
       </div>
-
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl w-full">
-        <button onClick={() => handleSelect('maitri')} className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
+        <button onClick={() => handleSelect('maitri')}
+          className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
           <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
-             <img src="/maitri.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Maitri" />
-             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-cyan-300">
-               <Snowflake className="w-5 h-5" />
-             </div>
+            <img src="/maitri.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Maitri" />
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-cyan-300">
+              <Snowflake className="w-5 h-5" />
+            </div>
           </div>
           <h2 className="text-xl font-bold text-white mb-1">Maitri Station</h2>
         </button>
-
-        <button onClick={() => handleSelect('bharati')} className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
+        <button onClick={() => handleSelect('bharati')}
+          className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
           <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
-             <img src="/bharati.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Bharati" />
-             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-indigo-300">
-               <Wind className="w-5 h-5" />
-             </div>
+            <img src="/bharati.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Bharati" />
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-indigo-300">
+              <Wind className="w-5 h-5" />
+            </div>
           </div>
           <h2 className="text-xl font-bold text-white mb-1">Bharati Station</h2>
         </button>
@@ -60,13 +67,197 @@ const GatewayPage = () => {
   );
 };
 
-// Main Layout with Sliding Sidebar
+// ─── AI Notifications Slide Panel ─────────────────────────────────────────────
+const AINotificationsPanel = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const unsub = subscribeNotifications(n => setNotifs([...n]));
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, onClose]);
+
+  const critCount = notifs.filter(n => n.level === 'critical').length;
+  const warnCount = notifs.filter(n => n.level === 'warning').length;
+  const infoCount = notifs.filter(n => n.level === 'info').length;
+  const totalBadge = critCount + warnCount;
+
+  return (
+    <div
+      ref={panelRef}
+      className={`fixed top-0 left-0 h-full w-[420px] bg-slate-950/97 backdrop-blur-2xl border-r border-white/10 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-500/20 p-2.5 rounded-xl border border-blue-500/30">
+            <Bell className="w-5 h-5 text-blue-400" />
+          </div>
+          <div>
+            <h2 className="text-white font-bold tracking-widest uppercase text-sm">AI Notifications</h2>
+            <p className="text-slate-400 text-[10px] mt-0.5">Live threshold analysis feed</p>
+          </div>
+        </div>
+        <button onClick={onClose} className="p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Summary badges */}
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-white/10 bg-white/3 shrink-0 flex-wrap">
+        {critCount > 0 && (
+          <span className="flex items-center gap-1 bg-red-500/20 border border-red-500/30 text-red-400 px-2.5 py-1 rounded-lg text-xs font-bold">
+            <AlertTriangle className="w-3 h-3" /> {critCount} Critical
+          </span>
+        )}
+        {warnCount > 0 && (
+          <span className="flex items-center gap-1 bg-amber-500/20 border border-amber-500/30 text-amber-400 px-2.5 py-1 rounded-lg text-xs font-bold">
+            <Bell className="w-3 h-3" /> {warnCount} Warning
+          </span>
+        )}
+        {infoCount > 0 && (
+          <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 px-2.5 py-1 rounded-lg text-xs font-bold">
+            <Activity className="w-3 h-3" /> {infoCount} Info
+          </span>
+        )}
+        {totalBadge === 0 && infoCount === 0 && (
+          <span className="flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-2.5 py-1 rounded-lg text-xs font-bold">
+            <CheckCircle className="w-3 h-3" /> All Clear
+          </span>
+        )}
+        <span className="ml-auto text-slate-500 text-[10px] font-mono">{notifs.length} entries</span>
+      </div>
+
+      {/* All notifications */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {notifs.length === 0 ? (
+          <div className="text-slate-500 text-xs text-center py-10">Waiting for sensor data…</div>
+        ) : (
+          notifs.map(n => <NotifRow key={n.id} n={n} />)
+        )}
+      </div>
+
+      <div className="px-5 py-3 border-t border-white/10 bg-white/3 shrink-0">
+        <span className="text-slate-600 text-[10px] font-mono">Auto-generated from live AWS thresholds • no AI inference</span>
+      </div>
+    </div>
+  );
+};
+
+// ─── Critical Alerts Slide Panel ───────────────────────────────────────────────
+const CriticalAlertsPanel = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const [notifs, setNotifs] = useState<Notification[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const unsub = subscribeNotifications(n => setNotifs([...n]));
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) onClose();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, onClose]);
+
+  // Only truly critical alerts
+  const criticals = notifs.filter(n => n.level === 'critical');
+
+  return (
+    <div
+      ref={panelRef}
+      className={`fixed top-0 left-0 h-full w-[420px] bg-slate-950/97 backdrop-blur-2xl border-r border-red-500/20 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-red-500/20 bg-red-500/5 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="bg-red-500/20 p-2.5 rounded-xl border border-red-500/30 animate-pulse">
+            <AlertTriangle className="w-5 h-5 text-red-400" />
+          </div>
+          <div>
+            <h2 className="text-white font-bold tracking-widest uppercase text-sm">Critical Alerts</h2>
+            <p className="text-red-400/70 text-[10px] mt-0.5">Extreme-threshold & predictive warnings only</p>
+          </div>
+        </div>
+        <button onClick={onClose} className="p-1.5 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      {/* Count banner */}
+      <div className="px-5 py-3 border-b border-red-500/20 bg-red-500/5 shrink-0">
+        {criticals.length > 0 ? (
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 bg-red-500/20 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold">
+              <AlertTriangle className="w-3.5 h-3.5" /> {criticals.length} Active Critical Alert{criticals.length > 1 ? 's' : ''}
+            </span>
+            <span className="text-slate-500 text-[10px] font-mono ml-auto">Immediate action required</span>
+          </div>
+        ) : (
+          <span className="flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1.5 rounded-lg text-xs font-bold">
+            <CheckCircle className="w-3.5 h-3.5" /> No Critical Alerts — All Systems Nominal
+          </span>
+        )}
+      </div>
+
+      {/* Critical alerts list */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        {criticals.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-4">
+            <CheckCircle className="w-14 h-14 text-emerald-500/40" />
+            <p className="text-slate-500 text-sm text-center">No critical thresholds breached.<br />Station parameters within safe limits.</p>
+          </div>
+        ) : (
+          criticals.map(n => <NotifRow key={n.id} n={n} />)
+        )}
+      </div>
+
+      <div className="px-5 py-3 border-t border-red-500/20 bg-red-500/5 shrink-0">
+        <span className="text-slate-600 text-[10px] font-mono">Filters: temp &lt; −30°C · wind &gt; 80 km/h · pressure &lt; 960 hPa</span>
+      </div>
+    </div>
+  );
+};
+
+// ─── Sidebar nav item ──────────────────────────────────────────────────────────
+type NavDef =
+  | { kind: 'route'; path: string; label: string; Icon: React.ComponentType<{ className?: string }>; badge?: string }
+  | { kind: 'action'; id: string; label: string; Icon: React.ComponentType<{ className?: string }> };
+
+// ─── Main Layout ───────────────────────────────────────────────────────────────
 const MainLayout = ({ children }: { children: JSX.Element }) => {
   const activeNode = sessionStorage.getItem('activeNode') || 'NCPOR';
   const { selectedStation, setStation, sidebarCollapsed, toggleSidebar } = useStationStore();
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showStationDropdown, setShowStationDropdown] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [critPanelOpen, setCritPanelOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Live alert count for sidebar badge
+  const [alertBadge, setAlertBadge] = useState(0);
+  const [critBadge, setCritBadge] = useState(0);
+  useEffect(() => {
+    const unsub = subscribeNotifications(notifs => {
+      const count = notifs.filter(n => n.level === 'critical' || n.level === 'warning').length;
+      const crit = notifs.filter(n => n.level === 'critical').length;
+      setAlertBadge(count);
+      setCritBadge(crit);
+    });
+    return () => unsub();
+  }, []);
 
   useEffect(() => {
     if (activeNode === 'MAITRI' && selectedStation !== 'maitri') setStation('maitri');
@@ -79,130 +270,246 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
     window.location.href = '/login';
   };
 
-  const NavItem = ({ path, icon: Icon, label, badge }: any) => {
-    const isActive = location.pathname === path;
-    return (
-      <button 
-        onClick={() => navigate(path)}
-        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all whitespace-nowrap overflow-hidden ${
-          isActive 
-            ? 'bg-blue-500/20 border border-blue-500/30 text-blue-300 font-bold' 
-            : 'text-white/60 hover:bg-white/5 hover:text-white font-medium border border-transparent'
-        }`}
-      >
-        <Icon className="w-5 h-5 shrink-0" /> 
-        <span className={`transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100 flex-1 text-left'}`}>{label}</span>
-        {!sidebarCollapsed && badge && (
-          <span className="bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/20 shrink-0">{badge}</span>
-        )}
-      </button>
-    );
+  const NAV: NavDef[] = [
+    { kind: 'route',  path: '/dashboard', label: 'Dashboard',       Icon: LayoutDashboard },
+    { kind: 'route',  path: '/twin',      label: '3D Model',        Icon: Box },
+    { kind: 'route',  path: '/simulator', label: 'Scenario Simulator', Icon: Activity },
+    ...(activeNode === 'NCPOR' 
+      ? [{ kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef]
+      : [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef]
+    ),
+    { kind: 'action', id: 'ai-notifs',   label: 'AI Notifications', Icon: Bell },
+    { kind: 'action', id: 'crit-alerts', label: 'Critical Alerts',  Icon: AlertTriangle },
+  ];
+
+  const handleNavClick = (item: NavDef) => {
+    if (item.kind === 'route') {
+      setAiPanelOpen(false);
+      setCritPanelOpen(false);
+      navigate(item.path);
+    } else if (item.id === 'ai-notifs') {
+      setCritPanelOpen(false);
+      setAiPanelOpen(o => !o);
+    } else if (item.id === 'crit-alerts') {
+      setAiPanelOpen(false);
+      setCritPanelOpen(o => !o);
+    }
+  };
+
+  const isNavActive = (item: NavDef) => {
+    if (item.kind === 'route') return location.pathname === item.path;
+    if (item.id === 'ai-notifs') return aiPanelOpen;
+    if (item.id === 'crit-alerts') return critPanelOpen;
+    return false;
+  };
+
+  const getNavBadge = (item: NavDef) => {
+    if (item.kind === 'action' && item.id === 'ai-notifs') return alertBadge > 0 ? String(alertBadge) : undefined;
+    if (item.kind === 'action' && item.id === 'crit-alerts') return critBadge > 0 ? String(critBadge) : undefined;
+    return undefined;
+  };
+
+  const getNavBadgeColor = (item: NavDef) => {
+    if (item.kind === 'action' && item.id === 'crit-alerts') return 'bg-red-500/20 border-red-500/30 text-red-400';
+    return 'bg-amber-500/20 border-amber-500/30 text-amber-400';
   };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-cover bg-fixed bg-center font-sans text-slate-200"
-         style={{ backgroundImage: "url('/background.png')" }}>
-      
-      <div className="absolute inset-0 bg-black/60 z-0"></div>
+      style={{ backgroundImage: "url('/background.png')" }}>
 
-      {/* SLIDING SIDEBAR */}
-      <aside className={`${sidebarCollapsed ? 'w-[80px]' : 'w-[260px]'} flex-shrink-0 flex flex-col justify-between border-r border-white/10 bg-white/5 backdrop-blur-xl relative z-20 transition-all duration-300 ease-in-out`}>
-        <div className="p-4 flex flex-col h-full">
-          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'gap-3'} mb-10 h-10`}>
-            <div className="bg-white/10 p-2 rounded-lg border border-white/20 shrink-0">
-              <Snowflake className="w-5 h-5 text-blue-300" />
-            </div>
-            <h1 className={`text-xl font-black tracking-widest text-white transition-opacity duration-300 ${sidebarCollapsed ? 'opacity-0 hidden' : 'opacity-100 block'}`}>
-              ANTARVIK
-            </h1>
+      <div className="absolute inset-0 bg-black/60 z-0" />
+
+      {/* Slide panels — rendered above sidebar */}
+      <AINotificationsPanel open={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
+      <CriticalAlertsPanel  open={critPanelOpen} onClose={() => setCritPanelOpen(false)} />
+
+      {/* ── SIDEBAR ─────────────────────────────────────────────────────────── */}
+      <aside className={`${sidebarCollapsed ? 'w-[72px]' : 'w-[240px]'} flex-shrink-0 flex flex-col border-r border-white/10 bg-white/5 backdrop-blur-xl relative z-20 transition-all duration-300 ease-in-out`}>
+
+        {/* Logo */}
+        <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-0' : 'gap-3 px-5'} py-5 border-b border-white/10`}>
+          <div className="bg-white/10 p-2 rounded-xl border border-white/20 shrink-0">
+            <Snowflake className="w-5 h-5 text-blue-300" />
           </div>
-          
-          <nav className="flex flex-col gap-2 flex-1">
-            <NavItem path="/dashboard" icon={Activity} label="Dashboard" />
-            <NavItem path="/twin" icon={Shield} label="Digital Twin" />
-            <NavItem path="/predictions" icon={Wind} label="Predictions" />
-            <NavItem path="/alerts" icon={AlertTriangle} label="Alerts" badge="3" />
-          </nav>
+          {!sidebarCollapsed && (
+            <div>
+              <h1 className="text-lg font-black tracking-widest text-white leading-none">ANTARVIK</h1>
+              <p className="text-[10px] text-white/40 font-medium tracking-wider mt-0.5">Digital Twin Platform</p>
+            </div>
+          )}
         </div>
 
-        <div className={`p-6 border-t border-white/10 whitespace-nowrap overflow-hidden transition-all ${sidebarCollapsed ? 'opacity-0 h-0 p-0 border-none' : 'opacity-100'}`}>
-          <p className="text-[10px] uppercase tracking-widest text-white/40 font-bold mb-2">Team Atrangi</p>
-          <p className="text-xs text-white/60">Antarctic UI v1.0</p>
-        </div>
+        {/* Nav */}
+        <nav className="flex flex-col gap-1 flex-1 px-3 py-4 overflow-y-auto">
+          {NAV.map((item) => {
+            const active = isNavActive(item);
+            const badge = getNavBadge(item);
+            const badgeColor = getNavBadgeColor(item);
+            const isCrit = item.kind === 'action' && item.id === 'crit-alerts';
+            return (
+              <button
+                key={item.kind === 'route' ? item.path : item.id}
+                onClick={() => handleNavClick(item)}
+                title={sidebarCollapsed ? item.label : undefined}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left w-full ${
+                  active
+                    ? isCrit
+                      ? 'bg-red-500/20 border border-red-500/30 text-red-300 font-bold'
+                      : 'bg-blue-500/20 border border-blue-500/30 text-blue-300 font-bold'
+                    : isCrit
+                      ? 'text-white/55 hover:bg-red-500/10 hover:text-red-300 font-medium border border-transparent'
+                      : 'text-white/55 hover:bg-white/7 hover:text-white font-medium border border-transparent'
+                }`}
+              >
+                <item.Icon className={`w-5 h-5 shrink-0 ${isCrit && critBadge > 0 ? 'text-red-400 animate-pulse' : ''}`} />
+                {!sidebarCollapsed && (
+                  <>
+                    <span className="flex-1 text-sm">{item.label}</span>
+                    {badge && (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full border shrink-0 font-bold ${badgeColor}`}>
+                        {badge}
+                      </span>
+                    )}
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        {!sidebarCollapsed && (
+          <div className="px-5 py-4 border-t border-white/10">
+            <p className="text-[10px] uppercase tracking-widest text-white/30 font-bold">Team Atrangi</p>
+            <p className="text-xs text-white/40 mt-0.5">ANTARVIK v1.0 · SIH 2026</p>
+          </div>
+        )}
       </aside>
 
-      {/* Main Content Area */}
+      {/* ── MAIN AREA ────────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative z-10">
-        
-        {/* Top Header */}
-        <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-white/5 backdrop-blur-xl">
-          <div className="flex items-center gap-4">
-            <button onClick={toggleSidebar} className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+
+        {/* ── TOP MENU BAR ────────────────────────────────────────────────────── */}
+        <header className="h-16 flex-shrink-0 flex items-center justify-between px-5 border-b border-white/10 bg-white/5 backdrop-blur-xl gap-4">
+
+          {/* Left: burger + node badge + page title */}
+          <div className="flex items-center gap-3 min-w-0">
+            <button onClick={toggleSidebar}
+              className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-colors border border-transparent hover:border-white/10">
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden md:flex items-center bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold text-white/80 shadow-inner">
-              {activeNode === 'NCPOR' && <><Building2 className="w-3.5 h-3.5 mr-2 text-blue-300"/> HQ COMMAND</>}
-              {activeNode === 'MAITRI' && <><Snowflake className="w-3.5 h-3.5 mr-2 text-cyan-300"/> MAITRI EDGE</>}
-              {activeNode === 'BHARATI' && <><Wind className="w-3.5 h-3.5 mr-2 text-indigo-300"/> BHARATI EDGE</>}
+
+            {/* Active node pill */}
+            <div className="hidden md:flex items-center bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold text-white/80 gap-1.5">
+              {activeNode === 'NCPOR'   && <><Building2 className="w-3.5 h-3.5 text-blue-300" /> HQ Command</>}
+              {activeNode === 'MAITRI'  && <><Snowflake  className="w-3.5 h-3.5 text-cyan-300" /> Maitri Edge</>}
+              {activeNode === 'BHARATI' && <><Wind       className="w-3.5 h-3.5 text-indigo-300" /> Bharati Edge</>}
             </div>
+
+            {/* Breadcrumb page name */}
+            <span className="hidden lg:block text-white/30 text-sm">/</span>
+            <span className="hidden lg:block text-white/70 text-sm font-medium capitalize">
+              {location.pathname.replace('/', '') || 'dashboard'}
+            </span>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <button 
-                onClick={() => activeNode === 'NCPOR' && setShowDropdown(!showDropdown)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full border ${activeNode === 'NCPOR' ? 'bg-white/5 border-white/20 hover:border-white/40 hover:bg-white/10 cursor-pointer shadow-md' : 'bg-white/5 border-white/10 opacity-70 cursor-not-allowed'} transition-all`}
+          {/* Center: quick-tab nav — Dashboard & 3D Twin only */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {[
+              { path: '/dashboard', label: 'Overview' },
+              { path: '/twin',      label: '3D Twin'  },
+            ].map(({ path, label }) => (
+              <button
+                key={path}
+                onClick={() => navigate(path)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  location.pathname === path
+                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                    : 'text-white/50 hover:text-white hover:bg-white/10'
+                }`}
               >
-                <span className={`w-2 h-2 rounded-full animate-pulse ${selectedStation === 'maitri' ? 'bg-cyan-400' : 'bg-indigo-400'}`}></span>
-                <span className="text-xs font-bold tracking-widest uppercase text-white">
-                  {selectedStation} STATION
-                </span>
-                {activeNode === 'NCPOR' && <ChevronDown className="w-4 h-4 text-white/50" />}
+                {label}
+              </button>
+            ))}
+          </nav>
+
+          {/* Right: station selector + logout */}
+          <div className="flex items-center gap-2 shrink-0">
+
+            {/* Station selector */}
+            <div className="relative">
+              <button
+                onClick={() => activeNode === 'NCPOR' && setShowStationDropdown(s => !s)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold uppercase tracking-widest transition-all ${
+                  activeNode === 'NCPOR'
+                    ? 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40 cursor-pointer'
+                    : 'bg-white/5 border-white/10 opacity-60 cursor-not-allowed'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full animate-pulse ${selectedStation === 'maitri' ? 'bg-cyan-400' : 'bg-indigo-400'}`} />
+                <span className="text-white">{selectedStation} Station</span>
+                {activeNode === 'NCPOR' && <ChevronDown className="w-3.5 h-3.5 text-white/50" />}
               </button>
 
-              {showDropdown && activeNode === 'NCPOR' && (
-                <div className="absolute right-0 mt-3 w-48 bg-slate-900/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden py-1 z-50">
-                  <button onClick={() => { setStation('maitri'); setShowDropdown(false); }} className="w-full text-left px-5 py-3 text-xs font-bold uppercase tracking-wider hover:bg-white/10 flex items-center text-white/90">
-                    <Snowflake className="w-4 h-4 mr-3 text-cyan-400" /> Maitri
-                  </button>
-                  <button onClick={() => { setStation('bharati'); setShowDropdown(false); }} className="w-full text-left px-5 py-3 text-xs font-bold uppercase tracking-wider hover:bg-white/10 flex items-center text-white/90">
-                    <Wind className="w-4 h-4 mr-3 text-indigo-400" /> Bharati
-                  </button>
+              {showStationDropdown && activeNode === 'NCPOR' && (
+                <div className="absolute right-0 mt-2 w-48 bg-slate-950/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl overflow-hidden z-50">
+                  {([
+                    { id: 'maitri',  label: 'Maitri Station',  Icon: Snowflake, color: 'text-cyan-400' },
+                    { id: 'bharati', label: 'Bharati Station', Icon: Wind,      color: 'text-indigo-400' },
+                  ] as const).map(({ id, label, Icon, color }) => (
+                    <button
+                      key={id}
+                      onClick={() => { setStation(id); setShowStationDropdown(false); }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${selectedStation === id ? 'bg-white/5' : ''}`}
+                    >
+                      <Icon className={`w-4 h-4 ${color}`} />
+                      <span className="text-white/90">{label}</span>
+                      {selectedStation === id && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
 
-            <button onClick={handleLogout} className="p-2 text-white/50 hover:text-white hover:bg-red-500/20 rounded-full transition-colors border border-transparent hover:border-red-500/30">
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              title="Logout"
+              className="p-2.5 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors border border-transparent hover:border-red-500/20"
+            >
               <LogOut className="w-5 h-5" />
             </button>
           </div>
         </header>
-        
-        {/* Scrollable Body */}
+
+        {/* Scrollable body */}
         <main className="flex-1 overflow-y-auto pt-6 px-6">
           {children}
         </main>
+
         <FloatingChatbot />
       </div>
     </div>
   );
 };
 
+// ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        
+        <Route path="/login"   element={<Login />} />
         <Route path="/gateway" element={<ProtectedRoute><GatewayPage /></ProtectedRoute>} />
-        
+
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><StationOverview /></MainLayout></ProtectedRoute>} />
-        <Route path="/twin" element={<ProtectedRoute><MainLayout><DigitalTwinView /></MainLayout></ProtectedRoute>} />
-        <Route path="/predictions" element={<ProtectedRoute><MainLayout><PredictionsView /></MainLayout></ProtectedRoute>} />
-        <Route path="/alerts" element={<ProtectedRoute><MainLayout><AlertsView /></MainLayout></ProtectedRoute>} />
-        
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/twin"      element={<ProtectedRoute><MainLayout><DigitalTwinView /></MainLayout></ProtectedRoute>} />
+        <Route path="/simulator" element={<ProtectedRoute><MainLayout><ScenarioSimulator /></MainLayout></ProtectedRoute>} />
+        <Route path="/sensors"   element={<ProtectedRoute><MainLayout><SensorCalibration /></MainLayout></ProtectedRoute>} />
+        <Route path="/incidents" element={<ProtectedRoute><MainLayout><IncidentCommand /></MainLayout></ProtectedRoute>} />
+
+        <Route path="/"  element={<Navigate to="/login" replace />} />
+        <Route path="*"  element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db, close_db
 from app.routers import alerts, inventory, stations, telemetry, rag
+from app.routers import sensor_confidence
+from app.routers import telemetry_confidence
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,8 @@ app.include_router(rag.router)
 app.include_router(inventory.router)
 app.include_router(stations.router)
 app.include_router(telemetry.router)
+app.include_router(sensor_confidence.router)
+app.include_router(telemetry_confidence.router)
 
 @app.get("/health", tags=["system"])
 async def health_check():
