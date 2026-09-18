@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useStationStore } from '../../hooks/useStationStore';
 import { subscribeAwsData } from './StationOverview';
 
@@ -55,7 +56,12 @@ export default function DigitalTwinView() {
   const modelSrc = selectedStation === 'maitri' ? '/maitri_model/index.html' : '/bharati_model.html';
 
   return (
-    <div className="flex flex-col h-full w-full max-w-[1600px] mx-auto pb-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="flex flex-col h-full w-full max-w-[1600px] mx-auto pb-6"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4 shrink-0">
         <div>
@@ -83,6 +89,6 @@ export default function DigitalTwinView() {
           allow="fullscreen"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }

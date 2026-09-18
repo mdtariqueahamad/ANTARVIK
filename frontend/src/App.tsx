@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import StationOverview, { subscribeNotifications, NotifRow } from './components/dashboard/StationOverview';
 import type { Notification } from './components/dashboard/StationOverview';
 import DigitalTwinView from './components/dashboard/DigitalTwinView';
@@ -33,17 +34,26 @@ const GatewayPage = () => {
   return (
     <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center p-6 relative"
       style={{ backgroundImage: "url('/background.png')" }}>
-      <div className="absolute inset-0 bg-slate-900/40 z-0" />
-      <div className="relative z-10 text-center mb-10">
-        <div className="inline-flex items-center justify-center p-3 bg-white/5 backdrop-blur-md rounded-full mb-4 border border-white/10 shadow-lg">
+      <div className="absolute inset-0 bg-slate-950/45 z-0" />
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 text-center mb-10"
+      >
+        <div className="inline-flex items-center justify-center p-3 bg-white/10 backdrop-blur-sm rounded-full mb-4 border border-white/15 shadow-lg">
           <Building2 className="w-6 h-6 text-blue-300" />
         </div>
         <h1 className="text-2xl font-black text-white tracking-widest mb-2 drop-shadow-md">NCPOR CENTRAL COMMAND</h1>
         <p className="text-white/70 text-xs tracking-wide">Select a target research station to monitor</p>
-      </div>
+      </motion.div>
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl w-full">
-        <button onClick={() => handleSelect('maitri')}
-          className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
+        <motion.button 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          onClick={() => handleSelect('maitri')}
+          className="group flex flex-col items-center p-8 bg-slate-950/35 backdrop-blur-sm border border-white/15 rounded-2xl hover:bg-slate-950/45 hover:border-white/30 transition-colors duration-200 shadow-lg overflow-hidden relative">
           <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
             <img src="/maitri.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Maitri" />
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-cyan-300">
@@ -51,17 +61,21 @@ const GatewayPage = () => {
             </div>
           </div>
           <h2 className="text-xl font-bold text-white mb-1">Maitri Station</h2>
-        </button>
-        <button onClick={() => handleSelect('bharati')}
-          className="group flex flex-col items-center p-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl hover:-translate-y-1 hover:bg-white/10 hover:border-white/30 transition-all shadow-lg overflow-hidden relative">
+        </motion.button>
+        <motion.button 
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          onClick={() => handleSelect('bharati')}
+          className="group flex flex-col items-center p-8 bg-slate-950/35 backdrop-blur-sm border border-white/15 rounded-2xl hover:bg-slate-950/45 hover:border-white/30 transition-colors duration-200 shadow-lg overflow-hidden relative">
           <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
-            <img src="/bharati.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Bharati" />
+            <img src="/bharati-hero.png" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Bharati Station" />
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-indigo-300">
               <Wind className="w-5 h-5" />
             </div>
           </div>
           <h2 className="text-xl font-bold text-white mb-1">Bharati Station</h2>
-        </button>
+        </motion.button>
       </div>
     </div>
   );
@@ -315,10 +329,13 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-cover bg-fixed bg-center font-sans text-slate-200"
-      style={{ backgroundImage: "url('/background.png')" }}>
-
-      <div className="absolute inset-0 bg-black/60 z-0" />
+    <div className="relative isolate flex h-screen w-screen overflow-hidden bg-slate-950 font-sans text-slate-200">
+      <div
+        aria-hidden="true"
+        className="absolute -inset-3 z-0 scale-105 bg-cover bg-fixed bg-center blur-md"
+        style={{ backgroundImage: "url('/background.png')" }}
+      />
+      <div className="absolute inset-0 z-0 bg-slate-950/70" />
 
       {/* Slide panels — rendered above sidebar */}
       <AINotificationsPanel open={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
@@ -484,8 +501,19 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
         </header>
 
         {/* Scrollable body */}
-        <main className="flex-1 overflow-y-auto pt-6 px-6">
-          {children}
+        <main className="flex-1 overflow-y-auto pt-6 px-6 relative">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="h-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         <FloatingChatbot />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useStationStore } from '../../hooks/useStationStore';
 import {
   Thermometer, Star, Wind, Droplets,
@@ -104,13 +105,17 @@ const KPICard = ({ title, value, trend, status, onClick }: {
 }) => {
   const colors = { good: 'text-emerald-400', warning: 'text-amber-400', critical: 'text-red-400', default: 'text-white' };
   return (
-    <div onClick={onClick} className="bg-[#1e293b]/70 backdrop-blur-md border border-white/10 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:bg-white/10 transition-colors cursor-pointer active:scale-95">
+    <motion.div 
+      variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+      onClick={onClick} 
+      className="bg-slate-950/75 backdrop-blur-sm border border-white/10 rounded-xl p-4 flex flex-col justify-center shadow-lg transition-colors duration-200 hover:bg-slate-900/85 hover:border-white/20 cursor-pointer"
+    >
       <span className="text-xs text-slate-400 font-medium mb-1">{title}</span>
       <div className="flex items-baseline justify-between">
         <span className={`text-2xl font-bold ${status ? colors[status] : colors.default}`}>{value}</span>
         {trend && <span className={`text-xs ${status === 'critical' ? 'text-red-400' : status === 'warning' ? 'text-amber-400' : 'text-emerald-400'}`}>{trend}</span>}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -181,7 +186,7 @@ function initAwsStream() {
           _currentAws[s] = row;
           _awsListeners[s].forEach(fn => fn(row));
         });
-      }, 2000);
+      }, 10000);
     })
     .catch(() => { _awsInit = false; });
 }
@@ -219,7 +224,7 @@ export default function StationOverview() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStation]);
 
-  // Nudge ancillary data every 4 s
+  // Refresh ancillary simulated telemetry every 10 s.
   React.useEffect(() => {
     const iv = setInterval(() => {
       setEnvData(p => ({
@@ -242,7 +247,7 @@ export default function StationOverview() {
         foodKg: Math.max(0, +(p.foodKg - Math.random() * 0.04).toFixed(1)),
         wastagesKg: Math.max(0, +(p.wastagesKg + Math.random() * 0.02).toFixed(1)),
       }));
-    }, 4000);
+    }, 10000);
     return () => clearInterval(iv);
   }, []);
 
@@ -268,13 +273,23 @@ export default function StationOverview() {
   const wastageStatus: 'good' | 'warning' | 'critical' = kpi.wastagesKg < 300 ? 'good' : kpi.wastagesKg < 500 ? 'warning' : 'critical';
 
   return (
-    <div className="flex flex-col min-h-full pb-12 w-full max-w-[1600px] mx-auto relative">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={{
+        visible: { transition: { staggerChildren: 0.1 } }
+      }}
+      className="flex flex-col min-h-full pb-12 w-full max-w-[1600px] mx-auto relative"
+    >
 
       {/* HERO */}
-      <div className="relative w-full h-[240px] rounded-3xl overflow-hidden mb-6 border border-white/10 shadow-xl shrink-0">
+      <motion.div 
+        variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }}
+        className="relative w-full h-[240px] rounded-3xl overflow-hidden mb-6 border border-white/10 shadow-xl shrink-0"
+      >
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-700"
-          style={{ backgroundImage: `url(${selectedStation === 'maitri' ? '/maitri.jpeg' : '/bharati.jpeg'})` }}
+          style={{ backgroundImage: `url(${selectedStation === 'maitri' ? '/maitri2.png' : '/bharati-card.png'})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent pointer-events-none z-10" />
 
@@ -290,50 +305,48 @@ export default function StationOverview() {
         </div>
 
         {/* Live weather chip */}
-        <div className="absolute top-6 right-6 z-20 bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-xl flex gap-6 pointer-events-none">
-          <div className="flex items-center gap-3">
-            <Thermometer className="w-8 h-8 text-cyan-400" />
+        <div className={`absolute right-5 z-20 bg-slate-900/75 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2.5 shadow-lg flex gap-3 pointer-events-none ${selectedStation === 'maitri' ? 'bottom-5' : 'top-5'}`}>
+          <div className="flex items-center gap-2">
+            <Thermometer className="w-5 h-5 text-cyan-400" />
             <div>
-              <div className={`text-2xl font-bold leading-none transition-colors ${realData.temp < -25 ? 'text-red-400' : realData.temp < -15 ? 'text-amber-300' : 'text-white'}`}>
+              <div className={`text-lg font-bold leading-none transition-colors ${realData.temp < -25 ? 'text-red-400' : realData.temp < -15 ? 'text-amber-300' : 'text-white'}`}>
                 {realData.temp}°C
               </div>
-              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold flex items-center gap-1">
-                <Star className="w-3 h-3 fill-yellow-300 text-yellow-300" /> Live AWS
-              </span>
+
             </div>
           </div>
-          <div className="h-10 w-px bg-white/10" />
+          <div className="h-8 w-px bg-white/10" />
           <div className="flex flex-col gap-1 justify-center">
-            <div className={`flex items-center gap-2 font-medium text-sm ${realData.ws > 80 ? 'text-red-400 font-bold' : realData.ws > 50 ? 'text-amber-300' : 'text-white'}`}>
+            <div className={`flex items-center gap-1.5 font-medium text-xs ${realData.ws > 80 ? 'text-red-400 font-bold' : realData.ws > 50 ? 'text-amber-300' : 'text-white'}`}>
               <Wind className="w-3 h-3 text-indigo-400" />
               {realData.ws} km/h {windDirLabel(realData.wd)}
             </div>
-            <div className="flex items-center gap-2 text-white font-medium text-sm">
+            <div className="flex items-center gap-1.5 text-white font-medium text-xs">
               <Droplets className="w-3 h-3 text-blue-400" /> {realData.rh}% RH
             </div>
           </div>
-          <div className="h-10 w-px bg-white/10" />
-          <div className="flex flex-col gap-1 justify-center text-xs">
+          <div className="h-8 w-px bg-white/10" />
+          <div className="flex flex-col gap-0.5 justify-center text-[10px]">
             <div className="text-slate-400">Pressure</div>
-            <div className={`font-mono font-bold ${realData.pressure < 960 ? 'text-red-400' : realData.pressure < 975 ? 'text-amber-300' : 'text-white'}`}>
+            <div className={`font-mono font-bold text-xs ${realData.pressure < 960 ? 'text-red-400' : realData.pressure < 975 ? 'text-amber-300' : 'text-white'}`}>
               {realData.pressure} hPa
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* KPI RIBBON */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+      {/* OPERATIONAL SUMMARY */}
+      <section aria-label="Station operational summary" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <KPICard onClick={() => setActiveModal('Health')} title="Station Health"  value={`${health}/100`}                   trend={health >= 85 ? '↑ Good' : health >= 65 ? '→ Fair' : '↓ Poor'}  status={healthStatus} />
         <KPICard onClick={() => setActiveModal('Power')} title="Power Avail"     value={`${kpi.power.toFixed(1)}%`}         trend={kpi.power >= 90 ? 'Stable' : 'Degraded'}                         status={powerStatus} />
         <KPICard onClick={() => setActiveModal('Fuel')} title="Fuel Reserve"    value={`${kpi.fuelL.toLocaleString()} L`}  status={fuelStatus} />
         <KPICard onClick={() => setActiveModal('Water')} title="Water Storage"   value={`${kpi.waterL.toLocaleString()} L`} />
         <KPICard onClick={() => setActiveModal('Food')} title="Food Supplies"   value={`${kpi.foodKg} kg`} />
         <KPICard onClick={() => setActiveModal('Wastages')} title="Wastages"   value={`${kpi.wastagesKg.toFixed(1)} kg`} trend={kpi.wastagesKg < 300 ? 'Managed' : 'High'} status={wastageStatus} />
-      </div>
+      </section>
 
       {/* ROW 1: Met & Env */}
-      <div className="grid grid-cols-12 gap-6 mb-6">
+      <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="grid grid-cols-12 gap-6 mb-6">
 
         {/* Meteorological */}
         <div className="col-span-12 lg:col-span-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-lg relative overflow-hidden">
@@ -384,10 +397,10 @@ export default function StationOverview() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ROW 2: Geophysical */}
-      <div className="grid grid-cols-12 gap-6">
+      <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="grid grid-cols-12 gap-6">
         <div className="col-span-12 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-lg">
           <h3 className="text-xs uppercase tracking-widest text-white/50 font-bold mb-6 flex items-center gap-2">
             <Activity className="w-4 h-4 text-indigo-400" /> Geophysical &amp; Space Weather Data
@@ -423,12 +436,18 @@ export default function StationOverview() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Dynamic Info Modal */}
-      {activeModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-slate-900/90 border border-white/20 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      <AnimatePresence>
+        {activeModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-slate-900/90 border border-white/20 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+            >
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
               <h3 className="text-lg font-bold text-white uppercase tracking-widest">{activeModal} Information</h3>
               <button onClick={() => setActiveModal(null)} className="text-white/50 hover:text-white p-1 rounded-lg transition-colors hover:bg-white/10">
@@ -521,9 +540,10 @@ export default function StationOverview() {
                 Close
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
-      )}
-    </div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }

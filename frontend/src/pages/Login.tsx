@@ -26,7 +26,7 @@ const Login: React.FC = () => {
       {/* HEADER */}
       <header className="absolute top-0 w-full flex justify-between items-center px-10 py-6 z-50">
         <div className="flex items-center gap-4">
-          <div className="bg-white/5 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-lg">
+          <div className="bg-slate-950/25 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-lg">
             <Snowflake className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
           href="https://ncpor.res.in/antarcticas/display/377-bharati" 
           target="_blank" 
           rel="noreferrer"
-          className="bg-white/5 backdrop-blur-sm border border-white/20 text-white px-5 py-2 rounded-full flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all shadow-lg"
+          className="bg-slate-950/25 backdrop-blur-sm border border-white/20 text-white px-5 py-2 rounded-full flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all shadow-lg"
         >
           <User className="w-3.5 h-3.5" />
           Research Portal
@@ -51,13 +51,13 @@ const Login: React.FC = () => {
       <div className="flex-grow flex flex-col items-center justify-center z-10 px-4 mt-8">
         
         {/* Top Badge */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold mb-6 shadow-lg text-white">
+        <div className="bg-slate-950/25 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold mb-6 shadow-lg text-white">
           <Snowflake className="w-3 h-3" />
           SIH 2026 • Problem Statement 60
         </div>
 
         {/* The Large Parent Glass Panel - MORE TRANSPARENT, LESS BLUR, SMALLER */}
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-[2rem] p-8 flex flex-col items-center shadow-[0_8px_32px_0_rgba(0,0,0,0.2)] max-w-3xl w-full">
+        <div className="bg-slate-950/30 backdrop-blur-sm border border-white/15 rounded-2xl p-8 flex flex-col items-center shadow-[0_8px_32px_0_rgba(0,0,0,0.2)] max-w-3xl w-full">
           
           <h1 className="text-2xl font-black text-white mb-2 text-center drop-shadow-lg tracking-tight">
             Select <span className="text-blue-300">Operating Node</span>
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
             {/* Card 1: NCPOR (Goa) */}
             <div 
               onClick={() => handleSelect('NCPOR')}
-              className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+              className="group bg-slate-950/25 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
             >
               <div className="w-full h-24 relative">
                  <img src="/goa.jpeg" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90" alt="NCPOR Goa" />
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
             {/* Card 2: MAITRI */}
             <div 
               onClick={() => handleSelect('MAITRI')}
-              className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+              className="group bg-slate-950/25 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
             >
               <div className="w-full h-24 relative">
                  <img src="/maitri.jpeg" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90" alt="Maitri Station" />
@@ -114,10 +114,10 @@ const Login: React.FC = () => {
             {/* Card 3: BHARATI */}
             <div 
               onClick={() => handleSelect('BHARATI')}
-              className="group bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
+              className="group bg-slate-950/25 backdrop-blur-sm border border-white/10 rounded-xl flex flex-col items-center relative overflow-hidden shadow-lg hover:-translate-y-1 hover:border-white/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
             >
               <div className="w-full h-24 relative">
-                 <img src="/bharati.jpeg" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90" alt="Bharati Station" />
+                 <img src="/bharati-hero.png" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90" alt="Bharati Station" />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               </div>
               <div className="absolute top-16 bg-white/10 backdrop-blur-md rounded-full p-2 shadow-xl text-indigo-300 flex items-center justify-center border border-white/10 group-hover:bg-indigo-600 group-hover:text-white transition-colors">

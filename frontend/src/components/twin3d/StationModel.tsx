@@ -31,11 +31,11 @@ const useBharatiStation = () => {
       cyan: new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.8 }),
     };
 
-    function statusMeta(status, type, metrics) {
+    function statusMeta(status: string, type: string, metrics: Record<string, string>) {
       return { status, type, metrics };
     }
 
-    function box(name, x, y, z, sx, sy, sz, mat, meta = null) {
+    function box(name: string, x: number, y: number, z: number, sx: number, sy: number, sz: number, mat: THREE.Material, meta: any = null) {
       const g = new THREE.Group(); g.name = name;
       const m = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), mat);
       m.castShadow = true; m.receiveShadow = true; g.add(m);
@@ -56,7 +56,7 @@ const useBharatiStation = () => {
 
     // MAIN U-SHAPED STATION
     const main = new THREE.Group(); main.name = "Main Research Station";
-    function wing(x, z, sx, sz) {
+    function wing(x: number, z: number, sx: number, sz: number) {
       const body = new THREE.Mesh(new THREE.BoxGeometry(sx, 15, sz), mats.blue);
       body.position.set(x, 12, z); body.castShadow = true; body.receiveShadow = true; main.add(body);
       const roof = new THREE.Mesh(new THREE.BoxGeometry(sx + 1.2, 1.5, sz + 1.2), mats.roof);
@@ -138,12 +138,12 @@ const useBharatiStation = () => {
 };
 
 // UI Overlay Component for selected asset
-const AssetDetailsPanel = ({ asset, onClose }) => {
+const AssetDetailsPanel = ({ asset, onClose }: { asset: any; onClose: () => void }) => {
   if (!asset) return null;
 
   const { name, type, status, metrics } = asset.userData;
   
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     OPERATIONAL: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
     WARNING: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
     CRITICAL: 'text-red-400 bg-red-400/10 border-red-400/20'
@@ -183,7 +183,7 @@ const AssetDetailsPanel = ({ asset, onClose }) => {
         {Object.entries(metrics || {}).map(([key, value]) => (
           <div key={key} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-lg border border-white/5">
             <span className="text-white/60 text-xs">{key}</span>
-            <span className="text-white font-mono text-xs">{value}</span>
+            <span className="text-white font-mono text-xs">{value as React.ReactNode}</span>
           </div>
         ))}
       </div>
@@ -195,7 +195,7 @@ export const StationModel: React.FC = () => {
   const stationGroup = useBharatiStation();
   const [selectedAsset, setSelectedAsset] = useState<THREE.Object3D | null>(null);
 
-  const handlePointerDown = (e) => {
+  const handlePointerDown = (e: any) => {
     e.stopPropagation();
     
     // Find the closest parent that has userData status (meaning it's an equipment group)
