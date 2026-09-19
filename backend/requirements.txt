@@ -17,3 +17,5 @@ python-multipart==0.0.9
 pandas
 openpyxl
 protobuf==4.25.3
+pymongo==4.6.1
+dnspython==2.5.0
