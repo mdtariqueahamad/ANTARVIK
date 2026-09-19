@@ -14,13 +14,23 @@ from app.simulators.energy import EnergySimulator
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("simulator")
 
-# Load real datasets
+# Load real datasets from MongoDB Atlas
 try:
-    df_bharati = pd.read_excel("/app/data/Bharati - AWS_2025_filtered_data.xlsx")
-    df_maitri = pd.read_excel("/app/data/Maitri - AWS_2016_filtered_data.xlsx")
-    logger.info(f"Loaded real datasets. Bharati: {len(df_bharati)} rows. Maitri: {len(df_maitri)} rows.")
+    from pymongo import MongoClient
+    # Use the pre-configured URL from settings (which is injected with the password by docker-compose)
+    client = MongoClient(settings.mongodb_url)
+    db = client[settings.mongodb_db_name]
+    
+    logger.info(f"Fetching historical datasets from MongoDB Atlas ({settings.mongodb_db_name})...")
+    # Fetch 5000 recent records for each station to keep startup fast and RAM low
+    docs_bharati = list(db.historical_telemetry.find({"station_code": "BHARATI"}, {"_id": 0}).limit(5000))
+    docs_maitri = list(db.historical_telemetry.find({"station_code": "MAITRI"}, {"_id": 0}).limit(5000))
+    
+    df_bharati = pd.DataFrame(docs_bharati)
+    df_maitri = pd.DataFrame(docs_maitri)
+    logger.info(f"Loaded real datasets from Atlas. Bharati: {len(df_bharati)} rows. Maitri: {len(df_maitri)} rows.")
 except Exception as e:
-    logger.error(f"Failed to load datasets: {e}")
+    logger.error(f"Failed to load datasets from Atlas: {e}")
     df_bharati = pd.DataFrame()
     df_maitri = pd.DataFrame()
 

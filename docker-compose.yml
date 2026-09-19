@@ -1,26 +1,5 @@
 version: '3.9'
 services:
-  db:
-    image: timescale/timescaledb:latest-pg16
-    container_name: antarvik-db
-    restart: unless-stopped
-    ports:
-    - 5432:5432
-    environment:
-      POSTGRES_DB: antarvik
-      POSTGRES_USER: antarvik
-      POSTGRES_PASSWORD: antarvik
-    volumes:
-    - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test:
-      - CMD-SHELL
-      - pg_isready -U antarvik -d antarvik
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-    - antarvik-net
   redis:
     image: redis:7-alpine
     container_name: antarvik-redis
@@ -66,14 +45,13 @@ services:
     ports:
     - 8000:8000
     depends_on:
-      db:
-        condition: service_healthy
       redis:
         condition: service_healthy
       mqtt:
         condition: service_started
     environment:
-    - DATABASE_URL=postgresql+asyncpg://antarvik:antarvik@db:5432/antarvik
+    - ANTARVIK_MONGODB_URL=mongodb+srv://mdtariqbist_db_user:${SECRET_MONGO}@cluster.chluorm.mongodb.net/Antarvik?appName=Test
+    - ANTARVIK_MONGODB_DB_NAME=Antarvik
     - REDIS_URL=redis://redis:6379/0
     - MQTT_BROKER=mqtt
     - MQTT_PORT=1883
@@ -114,6 +92,8 @@ services:
       mqtt:
         condition: service_started
     environment:
+    - ANTARVIK_MONGODB_URL=mongodb+srv://mdtariqbist_db_user:${SECRET_MONGO}@cluster.chluorm.mongodb.net/Antarvik?appName=Test
+    - ANTARVIK_MONGODB_DB_NAME=Antarvik
     - MQTT_BROKER=mqtt
     - MQTT_PORT=1883
     - ENVIRONMENT=development
@@ -123,8 +103,6 @@ services:
     networks:
     - antarvik-net
 volumes:
-  pgdata:
-    driver: local
   mosquitto-data:
     driver: local
   mosquitto-log:

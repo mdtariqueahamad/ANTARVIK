@@ -1,51 +1,53 @@
-"""Async SQLAlchemy engine and session factory for TimescaleDB / PostgreSQL."""
+"""MongoDB database connection and initialization using Motor and Beanie."""
 
-from __future__ import annotations
-
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from motor.motor_asyncio import AsyncIOMotorClient
+from beanie import init_beanie
+from pydantic import BaseModel
 
 from app.config import settings
+import logging
 
-engine = create_async_engine(
-    settings.database_url,
-    echo=settings.debug,
-    pool_size=10,
-    max_overflow=20,
-    pool_pre_ping=True,
-)
+logger = logging.getLogger(__name__)
 
-async_session_factory = async_sessionmaker(
-    engine,
-    class_=AsyncSession,
-    expire_on_commit=False,
-)
-
-
-class Base(DeclarativeBase):
-    """Declarative base for all ORM models."""
-    pass
-
-
-async def get_db() -> AsyncSession:  # type: ignore[misc]
-    """FastAPI dependency – yields an async session and ensures cleanup."""
-    async with async_session_factory() as session:
-        try:
-            yield session
-            await session.commit()
-        except Exception:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
-
+# This will hold the client
+db_client = None
 
 async def init_db() -> None:
-    """Create all tables (dev convenience; use Alembic in production)."""
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
+    """Initialize MongoDB connection and Beanie models."""
+    global db_client
+    logger.info(f"Connecting to MongoDB at {settings.mongodb_url}")
+    db_client = AsyncIOMotorClient(settings.mongodb_url)
+    
+    # Import all models here to avoid circular imports
+    from app.models.user import User
+    from app.models.station import Station, Asset, TelemetryReading
+    from app.models.alert import Alert
+    from app.models.inventory import InventoryItem, InventoryTransaction
+    from app.models.scenario import Scenario, ScenarioAction
+    
+    await init_beanie(
+        database=db_client[settings.mongodb_db_name],
+        document_models=[
+            User,
+            Station,
+            Asset,
+            TelemetryReading,
+            Alert,
+            InventoryItem,
+            InventoryTransaction,
+            Scenario,
+            ScenarioAction,
+        ],
+    )
+    logger.info("MongoDB and Beanie initialized successfully.")
 
 async def close_db() -> None:
-    """Dispose the engine pool."""
-    await engine.dispose()
+    """Close MongoDB connection."""
+    global db_client
+    if db_client:
+        db_client.close()
+        logger.info("MongoDB connection closed.")
+
+# Dependency for routes, although Beanie models can be queried globally without a session
+async def get_db():
+    yield db_client[settings.mongodb_db_name]

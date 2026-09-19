@@ -1,4 +1,5 @@
 import React from 'react';
+import mqtt from 'mqtt';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStationStore } from '../../hooks/useStationStore';
 import {
@@ -165,9 +166,44 @@ export function subscribeAwsData(station: 'maitri' | 'bharati', fn: AwsListener)
   return () => { _awsListeners[station].delete(fn); };
 }
 
+let _lastMqttT: number | null = null;
+let _lastMqttRh: number | null = null;
+let _lastMqttTime = 0;
+
 function initAwsStream() {
   if (_awsInit) return;
   _awsInit = true;
+
+  try {
+    if (mqtt && typeof mqtt.connect === 'function') {
+      const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+      client.on('connect', () => {
+        client.subscribe('antarvik/telemetry/MAITRI/data');
+      });
+      client.on('message', (topic: string, message: any) => {
+        try {
+          const data = JSON.parse(message.toString());
+          if (data.t !== undefined) {
+            _lastMqttT = data.t;
+            _lastMqttRh = data.rh !== undefined ? data.rh : null;
+            _lastMqttTime = Date.now();
+            
+            // Instantly push to listeners if we have current data
+            if (_currentAws.maitri && _lastMqttT !== null) {
+              const freshRow = { ..._currentAws.maitri, t: _lastMqttT, rh: _lastMqttRh ?? _currentAws.maitri.rh };
+              _currentAws.maitri = freshRow;
+              _awsListeners.maitri.forEach(fn => fn(freshRow));
+            }
+          }
+        } catch (e) {}
+      });
+    } else {
+      console.warn("MQTT library not loaded correctly.");
+    }
+  } catch (err) {
+    console.error("MQTT Error:", err);
+  }
+
   fetch('/aws_dataset.json')
     .then(r => r.json())
     .then(d => {
@@ -181,12 +217,19 @@ function initAwsStream() {
         (['maitri', 'bharati'] as const).forEach(s => {
           const stream = _awsStream[s];
           if (!stream.length) return;
-          const row = stream[_awsIdx[s] % stream.length];
+          const originalRow = stream[_awsIdx[s] % stream.length];
+          const row = { ...originalRow };
+          
+          if (s === 'maitri' && Date.now() - _lastMqttTime < 15000 && _lastMqttT !== null) {
+            row.t = _lastMqttT;
+            if (_lastMqttRh !== null) row.rh = _lastMqttRh;
+          }
+          
           _awsIdx[s]++;
           _currentAws[s] = row;
           _awsListeners[s].forEach(fn => fn(row));
         });
-      }, 10000);
+      }, 2000);
     })
     .catch(() => { _awsInit = false; });
 }

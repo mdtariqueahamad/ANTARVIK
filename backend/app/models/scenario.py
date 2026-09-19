@@ -1,42 +1,39 @@
-"""ScenarioRun ORM model for what-if analysis."""
-
-from __future__ import annotations
-
+"""Scenario Document models."""
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
-
-from sqlalchemy import DateTime, Float, String, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
-from sqlalchemy.orm import Mapped, mapped_column
-
-from app.database import Base
-
+from beanie import Document
+from pydantic import Field
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
+class Scenario(Document):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    name: str
+    description: Optional[str] = None
+    status: str = "draft"
+    duration_minutes: int = 60
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    created_by: Optional[uuid.UUID] = None
+    created_at: datetime = Field(default_factory=_utcnow)
+    metadata_json: Optional[dict] = None
 
-class ScenarioRun(Base):
-    __tablename__ = "scenario_runs"
+    class Settings:
+        name = "scenarios"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    station_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
-    scenario_type: Mapped[str] = mapped_column(String(64), nullable=False)
-    # scenario_type: polar_storm | generator_failure | resupply_delay | sensor_drift
-    parameters: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
-    status: Mapped[str] = mapped_column(String(32), default="running")
-    # status: running | completed | failed
-    results: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
-    risk_score_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    risk_score_after: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    triggered_by: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), nullable=True
-    )
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
-    completed_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
-    summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+class ScenarioAction(Document):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    scenario_id: uuid.UUID
+    trigger_time_offset_sec: int = 0
+    action_type: str
+    target_entity_type: str
+    target_entity_id: uuid.UUID
+    payload: dict
+    status: str = "pending"
+    executed_at: Optional[datetime] = None
+    result_json: Optional[dict] = None
+
+    class Settings:
+        name = "scenario_actions"

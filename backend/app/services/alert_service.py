@@ -1,20 +1,14 @@
 """Cascading alert engine with severity levels.
-
 Implements the signature cascade alert system:
   environmental → thermal → power → fuel → logistics
 """
-
 from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select, desc, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.models.alert import Alert
-
 
 class AlertService:
     """Alert management with cascade tracking."""
@@ -26,7 +20,6 @@ class AlertService:
 
     async def create_alert(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
         severity: str,
         category: str,
@@ -49,10 +42,8 @@ class AlertService:
             risk_score_impact=risk_score_impact,
             metadata_json=metadata_json,
         )
-        db.add(alert)
-        await db.flush()
+        await alert.insert()
 
-        # Publish to Redis
         if self.redis:
             import json
             try:
@@ -73,19 +64,14 @@ class AlertService:
 
     async def create_cascade(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
         chain: List[Dict[str, Any]],
     ) -> List[Alert]:
-        """Create a cascade of linked alerts.
-
-        Each alert in the chain references the previous as parent_alert_id.
-        """
+        """Create a cascade of linked alerts."""
         alerts = []
         parent_id = None
         for step in chain:
             alert = await self.create_alert(
-                db=db,
                 station_id=station_id,
                 severity=step.get("severity", "warning"),
                 category=step.get("category", "cascade"),
@@ -102,7 +88,6 @@ class AlertService:
 
     async def get_alerts(
         self,
-        db: AsyncSession,
         station_id: Optional[uuid.UUID] = None,
         severity: Optional[str] = None,
         status: Optional[str] = None,
@@ -111,67 +96,55 @@ class AlertService:
         offset: int = 0,
     ) -> List[Alert]:
         """Get alerts with optional filters."""
-        query = select(Alert)
+        query = Alert.find_all()
         if station_id:
-            query = query.where(Alert.station_id == station_id)
+            query = query.find(Alert.station_id == station_id)
         if severity:
-            query = query.where(Alert.severity == severity)
+            query = query.find(Alert.severity == severity)
         if status:
-            query = query.where(Alert.status == status)
+            query = query.find(Alert.status == status)
         if category:
-            query = query.where(Alert.category == category)
-        query = query.order_by(desc(Alert.triggered_at)).offset(offset).limit(limit)
-
-        result = await db.execute(query)
-        return list(result.scalars().all())
+            query = query.find(Alert.category == category)
+            
+        return await query.sort("-created_at").skip(offset).limit(limit).to_list()
 
     async def acknowledge(
         self,
-        db: AsyncSession,
         alert_id: uuid.UUID,
         user_id: uuid.UUID,
     ) -> Optional[Alert]:
         """Acknowledge an alert."""
-        result = await db.execute(select(Alert).where(Alert.id == alert_id))
-        alert = result.scalar_one_or_none()
+        alert = await Alert.find_one(Alert.id == alert_id)
         if alert:
             alert.status = "acknowledged"
             alert.acknowledged_at = datetime.now(timezone.utc)
             alert.acknowledged_by = user_id
-            await db.flush()
+            await alert.save()
         return alert
 
     async def resolve(
         self,
-        db: AsyncSession,
         alert_id: uuid.UUID,
         resolution_note: Optional[str] = None,
     ) -> Optional[Alert]:
         """Resolve an alert."""
-        result = await db.execute(select(Alert).where(Alert.id == alert_id))
-        alert = result.scalar_one_or_none()
+        alert = await Alert.find_one(Alert.id == alert_id)
         if alert:
             alert.status = "resolved"
             alert.resolved_at = datetime.now(timezone.utc)
-            if resolution_note and alert.metadata_json:
+            if resolution_note:
+                if alert.metadata_json is None:
+                    alert.metadata_json = {}
                 alert.metadata_json["resolution_note"] = resolution_note
-            elif resolution_note:
-                alert.metadata_json = {"resolution_note": resolution_note}
-            await db.flush()
+            await alert.save()
         return alert
 
     async def get_active_count(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
     ) -> Dict[str, int]:
         """Count active alerts by severity for a station."""
-        result = await db.execute(
-            select(Alert)
-            .where(Alert.station_id == station_id)
-            .where(Alert.status == "active")
-        )
-        alerts = result.scalars().all()
+        alerts = await Alert.find(Alert.station_id == station_id, Alert.status == "active").to_list()
         counts = {"info": 0, "warning": 0, "critical": 0, "emergency": 0, "total": 0}
         for a in alerts:
             counts[a.severity] = counts.get(a.severity, 0) + 1

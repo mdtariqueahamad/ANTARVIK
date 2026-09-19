@@ -1,42 +1,26 @@
-"""User ORM model with role enum."""
-
-from __future__ import annotations
-
+"""User Document model."""
 import uuid
 from datetime import datetime, timezone
 from typing import Optional
-
-from sqlalchemy import Boolean, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
-
-from app.database import Base
-
+from beanie import Document
+from pydantic import Field
 
 VALID_ROLES = ("controller", "logistics", "engineer", "admin")
-
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
+class User(Document):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    username: str
+    email: str
+    hashed_password: str
+    full_name: Optional[str] = None
+    role: str = "engineer"
+    station_id: Optional[uuid.UUID] = None
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=_utcnow)
+    last_login: Optional[datetime] = None
 
-class User(Base):
-    __tablename__ = "users"
-
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
-    username: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(String(256), unique=True, nullable=False)
-    hashed_password: Mapped[str] = mapped_column(String(256), nullable=False)
-    full_name: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
-    role: Mapped[str] = mapped_column(String(32), nullable=False, default="engineer")
-    # role: controller | logistics | engineer | admin
-    station_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), nullable=True
-    )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
-    last_login: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    class Settings:
+        name = "users"

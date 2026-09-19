@@ -15,8 +15,6 @@ from dataclasses import dataclass, field
 from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.inventory import InventoryItem, ResupplyWindow
 from app.models.station import Asset
@@ -69,7 +67,6 @@ class RiskService:
 
     async def compute_risk(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
         env_state: Optional[dict] = None,
         energy_state: Optional[dict] = None,
@@ -83,7 +80,7 @@ class RiskService:
         recommendations: List[str] = []
 
         # ── Fuel Margin ────────────────────────────────────────────────
-        fuel_score, fuel_detail = await self._fuel_margin_risk(db, station_id)
+        fuel_score, fuel_detail = await self._fuel_margin_risk(station_id)
         components.append(RiskComponent(
             name="fuel_margin",
             score=fuel_score,
@@ -97,7 +94,7 @@ class RiskService:
             recommendations.append("URGENT: Request emergency fuel resupply")
 
         # ── Food Days ──────────────────────────────────────────────────
-        food_score, food_detail = await self._consumable_risk(db, station_id, "food")
+        food_score, food_detail = await self._consumable_risk(station_id, "food")
         components.append(RiskComponent(
             name="food_days",
             score=food_score,
@@ -109,7 +106,7 @@ class RiskService:
             recommendations.append("Implement food rationing plan")
 
         # ── Medical Days ───────────────────────────────────────────────
-        med_score, med_detail = await self._consumable_risk(db, station_id, "medical")
+        med_score, med_detail = await self._consumable_risk(station_id, "medical")
         components.append(RiskComponent(
             name="medical_days",
             score=med_score,
@@ -172,16 +169,15 @@ class RiskService:
 
     async def _fuel_margin_risk(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
     ) -> tuple:
         """Compute fuel margin risk score."""
         result = await db.execute(
-            select(InventoryItem)
+            InventoryItem.find_all()
             .where(InventoryItem.station_id == station_id)
             .where(InventoryItem.category == "fuel")
         )
-        fuel_items = result.scalars().all()
+        fuel_items = await result.to_list()
 
         total_fuel = sum(i.quantity for i in fuel_items)
         total_rate = sum(i.daily_consumption_rate for i in fuel_items)
@@ -193,13 +189,13 @@ class RiskService:
 
         # Get next resupply
         resupply_result = await db.execute(
-            select(ResupplyWindow)
+            ResupplyWindow.find_all()
             .where(ResupplyWindow.station_id == station_id)
             .where(ResupplyWindow.status.in_(["scheduled", "in_transit"]))
             .order_by(ResupplyWindow.expected_date)
             .limit(1)
         )
-        resupply = resupply_result.scalar_one_or_none()
+        resupply = resupply_await result.first_or_none()
 
         if resupply and resupply.expected_date:
             days_to_resupply = (resupply.expected_date - date.today()).days
@@ -234,17 +230,16 @@ class RiskService:
 
     async def _consumable_risk(
         self,
-        db: AsyncSession,
         station_id: uuid.UUID,
         category: str,
     ) -> tuple:
         """Generic consumable risk scoring."""
         result = await db.execute(
-            select(InventoryItem)
+            InventoryItem.find_all()
             .where(InventoryItem.station_id == station_id)
             .where(InventoryItem.category == category)
         )
-        items = result.scalars().all()
+        items = await result.to_list()
 
         if not items:
             return 20.0, f"{category}: no data"

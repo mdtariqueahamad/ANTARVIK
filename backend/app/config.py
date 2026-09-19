@@ -8,8 +8,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="ANTARVIK_", env_file=".env", extra="ignore")
 
-    # ── Database (TimescaleDB / Postgres) ──────────────────────────────
-    database_url: str = "postgresql+asyncpg://antarvik:antarvik@db:5432/antarvik"
+    # ── Database (MongoDB) ──────────────────────────────
+    mongodb_url: str = "mongodb://antarvik:antarvik@db:27017"
+    mongodb_db_name: str = "antarvik"
 
     # ── Redis ──────────────────────────────────────────────────────────
     redis_url: str = "redis://redis:6379/0"

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package antarvik;
+
+message TelemetryReading {
+  string asset_id = 1;
+  string metric = 2;
+  double value = 3;
+  string unit = 4;
+  string quality = 5;
+  int64 timestamp_ms = 6;
+}
+
+message TelemetryBatch {
+  string station_code = 1;      // e.g. "MAITRI" or "BHARATI"
+  repeated TelemetryReading readings = 2;
+}
