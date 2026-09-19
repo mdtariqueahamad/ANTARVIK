@@ -35,8 +35,8 @@ function buildSmoothedStream(rows: AwsRow[], steps = 10): AwsRow[] {
 type StreamListener = (data: AwsRow) => void;
 const listeners = { maitri: new Set<StreamListener>(), bharati: new Set<StreamListener>() };
 let streamData: { maitri: AwsRow[]; bharati: AwsRow[] } = { maitri: [], bharati: [] };
-let idx = { maitri: 0, bharati: 0 };
-let currentData: { maitri: AwsRow | null; bharati: AwsRow | null } = { maitri: null, bharati: null };
+const idx = { maitri: 0, bharati: 0 };
+const currentData: { maitri: AwsRow | null; bharati: AwsRow | null } = { maitri: null, bharati: null };
 let initialized = false;
 
 export function initAwsStream() {

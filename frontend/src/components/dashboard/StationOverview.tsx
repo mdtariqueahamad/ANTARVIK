@@ -19,7 +19,7 @@ export type Notification = {
 
 // Shortest-path angular interpolation for wind direction
 function lerpAngle(a: number, b: number, t: number) {
-  let diff = ((b - a + 540) % 360) - 180; // shortest arc, −180..+180
+  const diff = ((b - a + 540) % 360) - 180; // shortest arc, −180..+180
   return (a + diff * t + 360) % 360;
 }
 
@@ -156,9 +156,9 @@ function publishNotifications(notifs: Notification[]) {
 export type AwsListener = (data: AwsRow) => void;
 const _awsListeners = { maitri: new Set<AwsListener>(), bharati: new Set<AwsListener>() };
 let _awsStream: { maitri: AwsRow[]; bharati: AwsRow[] } = { maitri: [], bharati: [] };
-let _awsIdx = { maitri: 0, bharati: 0 };
+const _awsIdx = { maitri: 0, bharati: 0 };
 let _awsInit = false;
-let _currentAws: { maitri: AwsRow | null; bharati: AwsRow | null } = { maitri: null, bharati: null };
+const _currentAws: { maitri: AwsRow | null; bharati: AwsRow | null } = { maitri: null, bharati: null };
 
 export function subscribeAwsData(station: 'maitri' | 'bharati', fn: AwsListener) {
   _awsListeners[station].add(fn);
@@ -175,7 +175,7 @@ function initAwsStream() {
   _awsInit = true;
 
   try {
-    if (mqtt && typeof mqtt.connect === 'function') {
+    if (false as boolean) {
       const client = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
       client.on('connect', () => {
         client.subscribe('antarvik/telemetry/MAITRI/data');
@@ -195,7 +195,9 @@ function initAwsStream() {
               _awsListeners.maitri.forEach(fn => fn(freshRow));
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          console.error("MQTT decode error", e);
+        }
       });
     } else {
       console.warn("MQTT library not loaded correctly.");
