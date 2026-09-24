@@ -296,7 +296,10 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
     { kind: 'route',  path: '/ships',     label: 'Ship Tracking',    Icon: Anchor },
     { kind: 'route',  path: '/simulator', label: 'Simulator',        Icon: Activity },
     ...(activeNode === 'NCPOR' 
-      ? [{ kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef]
+      ? [
+          { kind: 'route',  path: '/gateway',   label: 'Gateway Select', Icon: Building2 } as NavDef,
+          { kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef
+        ]
       : [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef]
     ),
     { kind: 'action', id: 'ai-notifs',   label: 'AI Notifications', Icon: Bell },
