@@ -14,6 +14,7 @@ interface StationStore {
   setMode: (mode: OperatingMode) => void;
   setSyncStatus: (status: SyncStatus) => void;
   toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
   toggleFaultInjection: () => void;
 }
 
@@ -24,7 +25,7 @@ export const useStationStore = create<StationStore>()(
       operatingMode: 'connected',
       lastSync: null,
       syncProgress: null,
-      sidebarCollapsed: false,
+      sidebarCollapsed: true,
       faultInjectionOpen: false,
 
       setStation: (station) => set({ selectedStation: station }),
@@ -36,6 +37,7 @@ export const useStationStore = create<StationStore>()(
           syncProgress: status.sync_progress ?? null,
         }),
       toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
       toggleFaultInjection: () => set((s) => ({ faultInjectionOpen: !s.faultInjectionOpen })),
     }),
     {

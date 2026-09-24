@@ -201,7 +201,7 @@ type NavDef =
 
 const MainLayout = ({ children }: { children: JSX.Element }) => {
   const activeNode = sessionStorage.getItem('activeNode') || 'NCPOR';
-  const { selectedStation, setStation, sidebarCollapsed, toggleSidebar } = useStationStore();
+  const { selectedStation, setStation, sidebarCollapsed, toggleSidebar, setSidebarCollapsed } = useStationStore();
   const [showStationDropdown, setShowStationDropdown] = useState(false);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
   const [critPanelOpen, setCritPanelOpen] = useState(false);
@@ -260,6 +260,11 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
     } else if (item.id === 'crit-alerts') {
       setAiPanelOpen(false);
       setCritPanelOpen(o => !o);
+    }
+    
+    // Auto-collapse sidebar after any selection if on mobile, or just everywhere to maintain a clean UI as requested.
+    if (!sidebarCollapsed) {
+      setSidebarCollapsed(true);
     }
   };
 
