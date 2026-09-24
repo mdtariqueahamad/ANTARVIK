@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import StationOverview, { subscribeNotifications, NotifRow } from './components/dashboard/StationOverview';
 import type { Notification } from './components/dashboard/StationOverview';
 import DigitalTwinView from './components/dashboard/DigitalTwinView';
+import Energy from './pages/Energy';
+import Logistics from './pages/Logistics';
+import Ships from './pages/Ships';
 import IncidentCommand from './pages/IncidentCommand';
 import SensorCalibration from './pages/SensorCalibration';
 import ScenarioSimulator from './pages/ScenarioSimulator';
@@ -10,7 +13,8 @@ import Login from './pages/Login';
 import { useStationStore } from './hooks/useStationStore';
 import {
   Building2, Snowflake, Wind, LogOut, ChevronDown, Menu, Activity,
-  AlertTriangle, Bell, CheckCircle, LayoutDashboard, X, Box, ShieldAlert, Cpu
+  AlertTriangle, Bell, CheckCircle, LayoutDashboard, X, Box, ShieldAlert, Cpu,
+  Zap, Package, Anchor
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import FloatingChatbot from './components/common/FloatingChatbot';
@@ -285,9 +289,12 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   const NAV: NavDef[] = [
-    { kind: 'route',  path: '/dashboard', label: 'Dashboard',       Icon: LayoutDashboard },
-    { kind: 'route',  path: '/twin',      label: '3D Model',        Icon: Box },
-    { kind: 'route',  path: '/simulator', label: 'Scenario Simulator', Icon: Activity },
+    { kind: 'route',  path: '/dashboard', label: 'Overview',         Icon: LayoutDashboard },
+    { kind: 'route',  path: '/twin',      label: '3D Twin',          Icon: Box },
+    { kind: 'route',  path: '/energy',    label: 'Energy',           Icon: Zap },
+    { kind: 'route',  path: '/logistics', label: 'Inventory',        Icon: Package },
+    { kind: 'route',  path: '/ships',     label: 'Ship Tracking',    Icon: Anchor },
+    { kind: 'route',  path: '/simulator', label: 'Simulator',        Icon: Activity },
     ...(activeNode === 'NCPOR' 
       ? [{ kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef]
       : [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef]
@@ -431,26 +438,6 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
             </span>
           </div>
 
-          {/* Center: quick-tab nav — Dashboard & 3D Twin only */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {[
-              { path: '/dashboard', label: 'Overview' },
-              { path: '/twin',      label: '3D Twin'  },
-            ].map(({ path, label }) => (
-              <button
-                key={path}
-                onClick={() => navigate(path)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  location.pathname === path
-                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
-                    : 'text-white/50 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
-
           {/* Right: station selector + logout */}
           <div className="flex items-center gap-2 shrink-0">
 
@@ -532,6 +519,9 @@ export default function App() {
 
         <Route path="/dashboard" element={<ProtectedRoute><MainLayout><StationOverview /></MainLayout></ProtectedRoute>} />
         <Route path="/twin"      element={<ProtectedRoute><MainLayout><DigitalTwinView /></MainLayout></ProtectedRoute>} />
+        <Route path="/energy"    element={<ProtectedRoute><MainLayout><Energy /></MainLayout></ProtectedRoute>} />
+        <Route path="/logistics" element={<ProtectedRoute><MainLayout><Logistics /></MainLayout></ProtectedRoute>} />
+        <Route path="/ships"     element={<ProtectedRoute><MainLayout><Ships /></MainLayout></ProtectedRoute>} />
         <Route path="/simulator" element={<ProtectedRoute><MainLayout><ScenarioSimulator /></MainLayout></ProtectedRoute>} />
         <Route path="/sensors"   element={<ProtectedRoute><MainLayout><SensorCalibration /></MainLayout></ProtectedRoute>} />
         <Route path="/incidents" element={<ProtectedRoute><MainLayout><IncidentCommand /></MainLayout></ProtectedRoute>} />

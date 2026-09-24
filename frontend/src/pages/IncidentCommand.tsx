@@ -12,6 +12,11 @@ interface Incident {
   timestamp: string;
   status: 'UNACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
   snapshot: any;
+  analysis?: {
+    rootCause: string;
+    metrics: { label: string; value: string; trend: string }[];
+    recommendedAction: string;
+  };
 }
 
 export default function IncidentCommand() {
@@ -23,7 +28,16 @@ export default function IncidentCommand() {
       title: 'Generator 2 Thermal Runaway',
       timestamp: '12 mins ago',
       status: 'UNACKNOWLEDGED',
-      snapshot: { Temp: '-32°C', Load: '115%', FuelFlow: 'Erratic', Wind: '42 km/h' }
+      snapshot: { Temp: '-32°C', Load: '115%', FuelFlow: 'Erratic', Wind: '42 km/h' },
+      analysis: {
+        rootCause: 'Intake louver ice buildup restricting cooling airflow.',
+        metrics: [
+          { label: 'Core Temp', value: '115°C', trend: 'Critical Rise' },
+          { label: 'Oil Pressure', value: '45 PSI', trend: 'Dropping' },
+          { label: 'Coolant Flow', value: '12 L/min', trend: 'Restricted' }
+        ],
+        recommendedAction: 'Engage pre-heater on Louver B; transition load to Gen 3 immediately.'
+      }
     },
     {
       id: 'INC-2026-0920',
@@ -32,7 +46,32 @@ export default function IncidentCommand() {
       title: 'Primary Sat-Link Dropout',
       timestamp: '2 hours ago',
       status: 'RESOLVED',
-      snapshot: { Temp: '-45°C', Pressure: '958 hPa', Wind: '110 km/h', Uplink: '0 Mbps' }
+      snapshot: { Temp: '-45°C', Pressure: '958 hPa', Wind: '110 km/h', Uplink: '0 Mbps' },
+      analysis: {
+        rootCause: 'Extreme wind (110km/h) misaligned Radome Dish 1.',
+        metrics: [
+          { label: 'Signal SNR', value: '2 dB', trend: 'Failing' },
+          { label: 'Packet Loss', value: '98%', trend: 'Critical' }
+        ],
+        recommendedAction: 'Wait for wind to drop below 80km/h, dispatch team for physical recalibration.'
+      }
+    },
+    {
+      id: 'INC-2026-0919',
+      station: 'MAITRI',
+      subsystem: 'Life Support',
+      title: 'HVAC Pressure Drop',
+      timestamp: '4 hours ago',
+      status: 'INVESTIGATING',
+      snapshot: { Temp: '-35°C', CabinPressure: '980 hPa', Co2: '800 ppm', Humidity: '12%' },
+      analysis: {
+        rootCause: 'Suspected frozen condensation in return air duct.',
+        metrics: [
+          { label: 'Duct Temp', value: '-12°C', trend: 'Freezing' },
+          { label: 'Airflow', value: '450 CFM', trend: 'Degraded' }
+        ],
+        recommendedAction: 'Isolate Sector 4 HVAC, enable thermal purge cycle.'
+      }
     }
   ]);
 
@@ -142,6 +181,36 @@ export default function IncidentCommand() {
                   ))}
                 </div>
               </div>
+
+              {/* Analysis & Root Cause */}
+              {activeIncident.analysis && (
+                <div className="mb-8">
+                  <h3 className="text-sm font-bold text-white/80 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-purple-400" />
+                    HQ Detailed Analysis & Correlation
+                  </h3>
+                  <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-5 mb-4">
+                    <span className="block text-[10px] text-purple-300 uppercase tracking-widest font-bold mb-2">Automated Root Cause Diagnosis</span>
+                    <p className="text-sm text-white/90">{activeIncident.analysis.rootCause}</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    {activeIncident.analysis.metrics.map(m => (
+                      <div key={m.label} className="bg-black/30 border border-white/5 p-3 rounded-xl flex flex-col justify-between">
+                        <span className="text-[10px] uppercase text-white/50">{m.label}</span>
+                        <span className="font-mono text-lg text-white font-bold">{m.value}</span>
+                        <span className={`text-[10px] font-bold ${m.trend.includes('Critical') || m.trend.includes('Failing') || m.trend.includes('Restricted') ? 'text-red-400' : 'text-amber-400'}`}>{m.trend}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-black/30 border border-white/10 rounded-xl p-4 flex items-start gap-3">
+                    <Zap className="w-5 h-5 text-yellow-400 shrink-0" />
+                    <div>
+                      <span className="block text-[10px] text-white/50 uppercase tracking-widest font-bold mb-1">Recommended SOP</span>
+                      <p className="text-sm text-white/80">{activeIncident.analysis.recommendedAction}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="pt-6 border-t border-white/10">
