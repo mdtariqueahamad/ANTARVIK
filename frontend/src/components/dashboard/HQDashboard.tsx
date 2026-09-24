@@ -30,8 +30,8 @@ export default function HQDashboard() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.03, zIndex: 10, boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      whileHover={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.2)" }}
+      transition={{ duration: 0.2 }}
       className="bg-white/5 border border-white/10 rounded-3xl p-6 flex flex-col relative overflow-hidden backdrop-blur-md hover:bg-white/10 hover:border-white/20 cursor-pointer group origin-center"
       onClick={() => handleSelectStation(id)}
     >
@@ -85,7 +85,7 @@ export default function HQDashboard() {
 
       {/* Global Metrics Banner */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <motion.div whileHover={{ scale: 1.05, y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-blue-500/20 cursor-default">
+        <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-blue-500/20 cursor-default">
           <div className="flex items-center gap-3 text-blue-300 mb-2">
             <Activity className="w-5 h-5" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Network Sync</span>
@@ -94,7 +94,7 @@ export default function HQDashboard() {
           <p className="text-xs text-blue-300/60 mt-1">Both nodes connected via DTN</p>
         </motion.div>
         
-        <motion.div whileHover={{ scale: 1.05, y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-emerald-500/20 cursor-default">
+        <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-emerald-500/20 cursor-default">
           <div className="flex items-center gap-3 text-emerald-300 mb-2">
             <Anchor className="w-5 h-5" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Logistics</span>
@@ -103,7 +103,7 @@ export default function HQDashboard() {
           <p className="text-xs text-emerald-300/60 mt-1">Vessels en-route to Antarctic</p>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05, y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="bg-purple-500/10 border border-purple-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-purple-500/20 cursor-default">
+        <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-purple-500/10 border border-purple-500/20 p-5 rounded-2xl backdrop-blur-sm transition-colors hover:bg-purple-500/20 cursor-default">
           <div className="flex items-center gap-3 text-purple-300 mb-2">
             <Zap className="w-5 h-5" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Total Energy</span>
@@ -112,7 +112,7 @@ export default function HQDashboard() {
           <p className="text-xs text-purple-300/60 mt-1">Combined Grid Output</p>
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.05, y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className={`p-5 rounded-2xl backdrop-blur-sm transition-colors cursor-default ${alertCount > 0 ? 'bg-red-500/10 border border-red-500/20 hover:bg-red-500/20' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
+        <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className={`p-5 rounded-2xl backdrop-blur-sm transition-colors cursor-default ${alertCount > 0 ? 'bg-red-500/10 border border-red-500/20 hover:bg-red-500/20' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
           <div className={`flex items-center gap-3 mb-2 ${alertCount > 0 ? 'text-red-300' : 'text-white/50'}`}>
             <ShieldAlert className="w-5 h-5" />
             <span className="text-[10px] uppercase tracking-widest font-bold">Active Incidents</span>

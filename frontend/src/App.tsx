@@ -385,8 +385,8 @@ Note: This data is consolidated from the digital twin sync pipelines.
                 key={item.kind === 'route' ? item.path : item.id}
                 onClick={() => handleNavClick(item)}
                 title={sidebarCollapsed ? item.label : undefined}
-                whileHover={{ scale: 1.05, x: 5, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)' }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.08)" }}
+                transition={{ duration: 0.2 }}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left w-full cursor-pointer origin-left ${
                   active
                     ? isCrit
@@ -455,7 +455,7 @@ Note: This data is consolidated from the digital twin sync pipelines.
             {/* HQ Generate Report Button */}
             {activeNode === 'NCPOR' && (
               <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.3)" }}
                 onClick={handleGenerateReport}
                 className="hidden md:flex items-center gap-2 px-3 py-2 mr-2 rounded-xl bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30 hover:border-blue-500/50 transition-all text-xs font-bold uppercase tracking-widest text-blue-300"
               >
@@ -467,7 +467,7 @@ Note: This data is consolidated from the digital twin sync pipelines.
             {/* Station selector */}
             <div className="relative">
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
                 onClick={() => activeNode === 'NCPOR' && setShowStationDropdown(s => !s)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold uppercase tracking-widest transition-all ${
                   activeNode === 'NCPOR'
@@ -502,7 +502,7 @@ Note: This data is consolidated from the digital twin sync pipelines.
 
             {/* Logout */}
             <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={{ backgroundColor: "rgba(239, 68, 68, 0.2)" }}
               onClick={handleLogout}
               title="Logout"
               className="p-2.5 text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all border border-transparent hover:border-red-500/20"
