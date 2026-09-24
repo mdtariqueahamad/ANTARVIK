@@ -12,7 +12,9 @@ const mockGensets = [
   { id: 'G1', state: 'running', powerOutput: 120, fuelConsumptionRate: 15, temperature: 75, efficiency: 92, nextService: '120h' },
   { id: 'G2', state: 'standby', powerOutput: 0, fuelConsumptionRate: 0, temperature: 20, efficiency: 95, nextService: '400h' },
   { id: 'G3', state: 'maintenance', powerOutput: 0, fuelConsumptionRate: 0, temperature: 15, efficiency: 0, nextService: '0h (Active)' },
-  { id: 'G4', state: 'running', powerOutput: 90, fuelConsumptionRate: 12, temperature: 72, efficiency: 89, nextService: '50h' }
+  { id: 'G4', state: 'running', powerOutput: 90, fuelConsumptionRate: 12, temperature: 72, efficiency: 89, nextService: '50h' },
+  { id: 'S1', state: 'online', powerOutput: 45, fuelConsumptionRate: 0, temperature: -12, efficiency: 98, nextService: '1200h' },
+  { id: 'W1', state: 'online', powerOutput: 80, fuelConsumptionRate: 0, temperature: -20, efficiency: 95, nextService: '800h' }
 ];
 const mockLoads = [
   { id: 'L1', name: 'Main Station HVAC', powerDemand: 80, priority: 1, state: 'online' },
@@ -20,6 +22,9 @@ const mockLoads = [
   { id: 'L3', name: 'Water Pumping System', powerDemand: 50, priority: 1, state: 'online' },
   { id: 'L4', name: 'External Lighting', powerDemand: 15, priority: 3, state: 'online' },
   { id: 'L5', name: 'Vehicle Block Heater', powerDemand: 25, priority: 2, state: 'online' },
+  { id: 'L6', name: 'Waste Treatment Plant', powerDemand: 45, priority: 1, state: 'online' },
+  { id: 'L7', name: 'Secondary Communications', powerDemand: 15, priority: 2, state: 'standby' },
+  { id: 'L8', name: 'Snow Melter (Potable Water)', powerDemand: 60, priority: 1, state: 'online' },
 ];
 const mockProfile = [
   { timestamp: '00:00', totalDemand: 150, generationCapacity: 200, renewableContribution: 20 },

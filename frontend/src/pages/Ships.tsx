@@ -13,6 +13,12 @@ export default function Ships() {
         { item: "Heavy Machinery Parts", qty: "4 Crates", weight: "12 Tons", critical: false },
         { item: "Food Supplies (Dry/Frozen)", qty: "18 Pallets", weight: "24 Tons", critical: true },
         { item: "Winter Clothing Kits", qty: "50 Boxes", weight: "2 Tons", critical: false },
+        { item: "Science Lab Reagents", qty: "2 Containers", weight: "1.5 Tons", critical: true },
+        { item: "Emergency Medical Kits", qty: "10 Boxes", weight: "0.5 Tons", critical: true },
+        { item: "Replacement Solar Panels", qty: "24 Units", weight: "3.2 Tons", critical: false },
+        { item: "Heavy Machinery Parts", qty: "4 Crates", weight: "12 Tons", critical: false },
+        { item: "Food Supplies (Dry/Frozen)", qty: "18 Pallets", weight: "24 Tons", critical: true },
+        { item: "Winter Clothing Kits", qty: "50 Boxes", weight: "2 Tons", critical: false },
         { item: "Science Lab Reagents", qty: "2 Containers", weight: "1.5 Tons", critical: true }
       ],
       status: "In Transit - Crossing Roaring Forties", lat: -45.12, lon: 21.05
@@ -22,6 +28,11 @@ export default function Ships() {
       cargo: [
         { item: "Scientific Equipment (MOM)", qty: "8 Crates", weight: "5 Tons", critical: false },
         { item: "High-Speed Diesel (HSD)", qty: "250,000 L", weight: "215 Tons", critical: true },
+        { item: "Medical Supplies", qty: "2 Containers", weight: "4 Tons", critical: true },
+        { item: "Satellite Dish Radome", qty: "1 Unit", weight: "3 Tons", critical: false },
+        { item: "Emergency Rescue Sleds", qty: "4 Units", weight: "1 Ton", critical: true },
+        { item: "Backup Server Racks", qty: "2 Units", weight: "1.2 Tons", critical: true },
+        { item: "Drilling Core Equipment", qty: "5 Pallets", weight: "8.5 Tons", critical: false },
         { item: "Medical Supplies", qty: "2 Containers", weight: "4 Tons", critical: true },
         { item: "Satellite Dish Radome", qty: "1 Unit", weight: "3 Tons", critical: false },
         { item: "Emergency Rescue Sleds", qty: "4 Units", weight: "1 Ton", critical: true }

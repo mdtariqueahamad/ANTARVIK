@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useStationStore } from '../../hooks/useStationStore';
 import {
   Thermometer, Star, Wind, Droplets,
-  AlertTriangle, MapPin, Activity, Bell, CheckCircle, Info, X
+  AlertTriangle, MapPin, Activity, Bell, CheckCircle, Info, X,
+  Building2, Users, Radio, Target, Shield
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -256,6 +257,7 @@ export default function StationOverview() {
   const [kpi, setKpi] = React.useState({
     power: 96, fuelL: 39900, waterL: 9600, foodKg: 420, wastagesKg: 120,
   });
+  
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
 
   // Subscribe to central AWS stream

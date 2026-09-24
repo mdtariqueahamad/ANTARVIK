@@ -13,7 +13,12 @@ const mockInventoryItems = [
   { id: '4', station_id: '1', name: 'MRE Rations (Frozen)', category: 'Food', sku: 'FOOD-FRZ-01', quantity: 8500, unit: 'Kg', threshold: 2000, daily_consumption: 35, days_remaining: 242, provenance: {} },
   { id: '5', station_id: '1', name: 'Dry Staples (Rice/Flour)', category: 'Food', sku: 'FOOD-DRY-01', quantity: 12000, unit: 'Kg', threshold: 3000, daily_consumption: 40, days_remaining: 300, provenance: {} },
   { id: '6', station_id: '1', name: 'Vehicle Spare Tracks', category: 'Parts', sku: 'SP-TRK-01', quantity: 24, unit: 'Units', threshold: 8, daily_consumption: 0.1, days_remaining: 240, provenance: {} },
-  { id: '7', station_id: '1', name: 'Generator Oil', category: 'Lubes', sku: 'LUB-GEN-02', quantity: 3200, unit: 'L', threshold: 500, daily_consumption: 12, days_remaining: 266, provenance: {} }
+  { id: '7', station_id: '1', name: 'Generator Oil', category: 'Lubes', sku: 'LUB-GEN-02', quantity: 3200, unit: 'L', threshold: 500, daily_consumption: 12, days_remaining: 266, provenance: {} },
+  { id: '8', station_id: '1', name: 'Snowmobile Tracks', category: 'Parts', sku: 'SP-SNO-04', quantity: 12, unit: 'Units', threshold: 4, daily_consumption: 0.05, days_remaining: 240, provenance: {} },
+  { id: '9', station_id: '1', name: 'Antifreeze Coolant', category: 'Lubes', sku: 'LUB-AF-01', quantity: 850, unit: 'L', threshold: 200, daily_consumption: 2.5, days_remaining: 340, provenance: {} },
+  { id: '10', station_id: '1', name: 'Emergency Rations', category: 'Food', sku: 'FOOD-EMG-01', quantity: 1500, unit: 'Kg', threshold: 1000, daily_consumption: 0, days_remaining: 999, provenance: {} },
+  { id: '11', station_id: '1', name: 'Helicopter Fuel (Jet-A1)', category: 'Fuel', sku: 'JET-A1-01', quantity: 45000, unit: 'L', threshold: 15000, daily_consumption: 250, days_remaining: 180, provenance: {} },
+  { id: '12', station_id: '1', name: 'Satcom Spares', category: 'Comms', sku: 'COM-SAT-02', quantity: 3, unit: 'Boxes', threshold: 1, daily_consumption: 0.01, days_remaining: 300, provenance: {} }
 ];
 
 const mockForecast = [

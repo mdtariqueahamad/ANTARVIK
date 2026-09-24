@@ -6,7 +6,6 @@ import {
   Package,
   Cloud,
   AlertTriangle,
-  Box,
   FileText,
   ChevronLeft,
   ChevronRight,
@@ -20,7 +19,6 @@ const NAV_ITEMS = [
   { path: '/logistics', label: 'Logistics', icon: Package },
   { path: '/environment', label: 'Environment', icon: Cloud },
   { path: '/alerts', label: 'Alerts', icon: AlertTriangle },
-  { path: '/3d', label: '3D View', icon: Box },
   { path: '/reports', label: 'Reports', icon: FileText },
 ];
 

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import HQDashboard from './components/dashboard/HQDashboard';
 import StationOverview, { subscribeNotifications, NotifRow } from './components/dashboard/StationOverview';
 import type { Notification } from './components/dashboard/StationOverview';
 import DigitalTwinView from './components/dashboard/DigitalTwinView';
@@ -26,64 +27,6 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 // ─── Gateway ──────────────────────────────────────────────────────────────────
-const GatewayPage = () => {
-  const { setStation } = useStationStore();
-  const navigate = useNavigate();
-
-  const handleSelect = (station: 'maitri' | 'bharati') => {
-    setStation(station);
-    navigate('/dashboard');
-  };
-
-  return (
-    <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center p-6 relative"
-      style={{ backgroundImage: "url('/background.png')" }}>
-      <div className="absolute inset-0 bg-slate-950/45 z-0" />
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 text-center mb-10"
-      >
-        <div className="inline-flex items-center justify-center p-3 bg-white/10 backdrop-blur-sm rounded-full mb-4 border border-white/15 shadow-lg">
-          <Building2 className="w-6 h-6 text-blue-300" />
-        </div>
-        <h1 className="text-2xl font-black text-white tracking-widest mb-2 drop-shadow-md">NCPOR CENTRAL COMMAND</h1>
-        <p className="text-white/70 text-xs tracking-wide">Select a target research station to monitor</p>
-      </motion.div>
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl w-full">
-        <motion.button 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          onClick={() => handleSelect('maitri')}
-          className="group flex flex-col items-center p-8 bg-slate-950/35 backdrop-blur-sm border border-white/15 rounded-2xl hover:bg-slate-950/45 hover:border-white/30 transition-colors duration-200 shadow-lg overflow-hidden relative">
-          <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
-            <img src="/maitri.jpeg" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Maitri" />
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-cyan-300">
-              <Snowflake className="w-5 h-5" />
-            </div>
-          </div>
-          <h2 className="text-xl font-bold text-white mb-1">Maitri Station</h2>
-        </motion.button>
-        <motion.button 
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-          onClick={() => handleSelect('bharati')}
-          className="group flex flex-col items-center p-8 bg-slate-950/35 backdrop-blur-sm border border-white/15 rounded-2xl hover:bg-slate-950/45 hover:border-white/30 transition-colors duration-200 shadow-lg overflow-hidden relative">
-          <div className="w-full h-32 mb-6 relative rounded-xl overflow-hidden border border-white/10 shadow-inner">
-            <img src="/bharati-hero.png" className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" alt="Bharati Station" />
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md rounded-full p-2 border border-white/20 text-indigo-300">
-              <Wind className="w-5 h-5" />
-            </div>
-          </div>
-          <h2 className="text-xl font-bold text-white mb-1">Bharati Station</h2>
-        </motion.button>
-      </div>
-    </div>
-  );
-};
 
 // ─── AI Notifications Slide Panel ─────────────────────────────────────────────
 const AINotificationsPanel = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
@@ -255,6 +198,12 @@ type NavDef =
   | { kind: 'action'; id: string; label: string; Icon: React.ComponentType<{ className?: string }> };
 
 // ─── Main Layout ───────────────────────────────────────────────────────────────
+const DashboardWrapper = () => {
+  const location = useLocation();
+  const isHQ = sessionStorage.getItem('activeNode') === 'NCPOR' && !location.search.includes('edge=1');
+  return isHQ ? <HQDashboard /> : <StationOverview />;
+};
+
 const MainLayout = ({ children }: { children: JSX.Element }) => {
   const activeNode = sessionStorage.getItem('activeNode') || 'NCPOR';
   const { selectedStation, setStation, sidebarCollapsed, toggleSidebar } = useStationStore();
@@ -289,7 +238,8 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   const NAV: NavDef[] = [
-    { kind: 'route',  path: '/dashboard', label: 'Overview',         Icon: LayoutDashboard },
+    { kind: 'route',  path: '/dashboard', label: activeNode === 'NCPOR' ? 'HQ Gateway' : 'Overview', Icon: activeNode === 'NCPOR' ? Building2 : LayoutDashboard },
+    ...(activeNode === 'NCPOR' ? [{ kind: 'route', path: '/dashboard?edge=1', label: 'Station View', Icon: LayoutDashboard } as NavDef] : []),
     { kind: 'route',  path: '/twin',      label: '3D Twin',          Icon: Box },
     { kind: 'route',  path: '/energy',    label: 'Energy',           Icon: Zap },
     { kind: 'route',  path: '/logistics', label: 'Inventory',        Icon: Package },
@@ -297,7 +247,6 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
     { kind: 'route',  path: '/simulator', label: 'Simulator',        Icon: Activity },
     ...(activeNode === 'NCPOR' 
       ? [
-          { kind: 'route',  path: '/gateway',   label: 'Gateway Select', Icon: Building2 } as NavDef,
           { kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef
         ]
       : [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef]
@@ -321,7 +270,7 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   const isNavActive = (item: NavDef) => {
-    if (item.kind === 'route') return location.pathname === item.path;
+    if (item.kind === 'route') return location.pathname + location.search === item.path || (item.path === '/dashboard' && location.pathname === '/dashboard' && location.search === '');
     if (item.id === 'ai-notifs') return aiPanelOpen;
     if (item.id === 'crit-alerts') return critPanelOpen;
     return false;
@@ -586,9 +535,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login"   element={<Login />} />
-        <Route path="/gateway" element={<ProtectedRoute><GatewayPage /></ProtectedRoute>} />
+        <Route path="/gateway" element={<Navigate to="/dashboard" replace />} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><MainLayout><StationOverview /></MainLayout></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><MainLayout><DashboardWrapper /></MainLayout></ProtectedRoute>} />
         <Route path="/twin"      element={<ProtectedRoute><MainLayout><DigitalTwinView /></MainLayout></ProtectedRoute>} />
         <Route path="/energy"    element={<ProtectedRoute><MainLayout><Energy /></MainLayout></ProtectedRoute>} />
         <Route path="/logistics" element={<ProtectedRoute><MainLayout><Logistics /></MainLayout></ProtectedRoute>} />

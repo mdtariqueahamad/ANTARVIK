@@ -72,6 +72,40 @@ export default function IncidentCommand() {
         ],
         recommendedAction: 'Isolate Sector 4 HVAC, enable thermal purge cycle.'
       }
+    },
+    {
+      id: 'INC-2026-0918',
+      station: 'BHARATI',
+      subsystem: 'Power Grid',
+      title: 'Wind Turbine #3 Over-speed',
+      timestamp: '1 day ago',
+      status: 'RESOLVED',
+      snapshot: { Wind: '145 km/h', Rotor: '35 RPM', Output: '120kW (Capped)' },
+      analysis: {
+        rootCause: 'Category 4 blizzard sustained gusts over design limit.',
+        metrics: [
+          { label: 'Brake Temp', value: '250°C', trend: 'Cooling' },
+          { label: 'Vibration', value: '0.2g', trend: 'Normal' }
+        ],
+        recommendedAction: 'Turbine auto-feathered and locked. Resume when wind drops below 90 km/h.'
+      }
+    },
+    {
+      id: 'INC-2026-0917',
+      station: 'MAITRI',
+      subsystem: 'Telemetry Sync',
+      title: 'DTN Gateway Buffer Overflow',
+      timestamp: '2 days ago',
+      status: 'RESOLVED',
+      snapshot: { Buffer: '98%', SyncRate: '0 KB/s', SatLink: 'Degraded' },
+      analysis: {
+        rootCause: 'Prolonged satellite dropout during aurora storm led to local buffer fill.',
+        metrics: [
+          { label: 'Queue Size', value: '450,000 pkts', trend: 'Flushing' },
+          { label: 'Compression', value: 'Enabled', trend: 'Active' }
+        ],
+        recommendedAction: 'Switch to LZ4 max compression profile; utilize secondary Ku-band.'
+      }
     }
   ]);
 
