@@ -9,12 +9,12 @@ import { useStationStore } from '../hooks/useStationStore';
 
 // Mocks for energy page
 const mockGensets = [
-  { id: 'G1', state: 'running', powerOutput: 120, fuelConsumptionRate: 15, temperature: 75, efficiency: 92, nextService: '120h' },
-  { id: 'G2', state: 'standby', powerOutput: 0, fuelConsumptionRate: 0, temperature: 20, efficiency: 95, nextService: '400h' },
-  { id: 'G3', state: 'maintenance', powerOutput: 0, fuelConsumptionRate: 0, temperature: 15, efficiency: 0, nextService: '0h (Active)' },
-  { id: 'G4', state: 'running', powerOutput: 90, fuelConsumptionRate: 12, temperature: 72, efficiency: 89, nextService: '50h' },
-  { id: 'S1', state: 'online', powerOutput: 45, fuelConsumptionRate: 0, temperature: -12, efficiency: 98, nextService: '1200h' },
-  { id: 'W1', state: 'online', powerOutput: 80, fuelConsumptionRate: 0, temperature: -20, efficiency: 95, nextService: '800h' }
+  { id: 'G1', name: 'Main Diesel Gen 1', status: 'running', output_kw: 120, capacity_kw: 150, fuel_rate_lph: 15, runtime_hours: 450, rul_hours: 1200 },
+  { id: 'G2', name: 'Main Diesel Gen 2', status: 'standby', output_kw: 0, capacity_kw: 150, fuel_rate_lph: 0, runtime_hours: 320, rul_hours: 4000 },
+  { id: 'G3', name: 'Backup Gen', status: 'maintenance', output_kw: 0, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 800, rul_hours: 0 },
+  { id: 'G4', name: 'Peaker Gen', status: 'running', output_kw: 90, capacity_kw: 100, fuel_rate_lph: 12, runtime_hours: 150, rul_hours: 5000 },
+  { id: 'S1', name: 'Solar Array', status: 'running', output_kw: 45, capacity_kw: 50, fuel_rate_lph: 0, runtime_hours: 12000, rul_hours: 50000 },
+  { id: 'W1', name: 'Wind Turbine', status: 'running', output_kw: 80, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 8000, rul_hours: 20000 }
 ];
 const mockLoads = [
   { id: 'L1', name: 'Main Station HVAC', powerDemand: 80, priority: 1, state: 'online' },
