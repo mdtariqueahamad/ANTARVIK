@@ -27,15 +27,18 @@ const mockLoads = [
   { id: 'L8', name: 'Snow Melter (Potable Water)', powerDemand: 60, priority: 1, state: 'online' },
 ];
 const mockProfile = [
-  { timestamp: '00:00', totalDemand: 150, generationCapacity: 200, renewableContribution: 20 },
-  { timestamp: '04:00', totalDemand: 140, generationCapacity: 200, renewableContribution: 10 },
-  { timestamp: '08:00', totalDemand: 180, generationCapacity: 300, renewableContribution: 50 },
-  { timestamp: '12:00', totalDemand: 210, generationCapacity: 300, renewableContribution: 80 },
+  { hour: 0, heating_kw: 60, lighting_kw: 15, equipment_kw: 25, cooking_kw: 5 },
+  { hour: 4, heating_kw: 65, lighting_kw: 15, equipment_kw: 25, cooking_kw: 5 },
+  { hour: 8, heating_kw: 70, lighting_kw: 20, equipment_kw: 50, cooking_kw: 30 },
+  { hour: 12, heating_kw: 60, lighting_kw: 15, equipment_kw: 60, cooking_kw: 45 },
+  { hour: 16, heating_kw: 65, lighting_kw: 25, equipment_kw: 40, cooking_kw: 20 },
+  { hour: 20, heating_kw: 75, lighting_kw: 30, equipment_kw: 30, cooking_kw: 40 }
 ];
 const mockFuel = [
-  { date: '2026-10-01', predicted_level: 250000, consumption_rate: 1200 },
-  { date: '2026-11-01', predicted_level: 214000, consumption_rate: 1200 },
-  { date: '2026-12-01', predicted_level: 178000, consumption_rate: 1200 },
+  { date: '2026-10-01', level_liters: 250000, lower_bound: 245000, upper_bound: 255000 },
+  { date: '2026-10-15', level_liters: 214000, lower_bound: 205000, upper_bound: 220000 },
+  { date: '2026-11-01', level_liters: 178000, lower_bound: 165000, upper_bound: 190000 },
+  { date: '2026-11-15', level_liters: 142000, lower_bound: 120000, upper_bound: 160000 }
 ];
 
 export default function Energy() {
@@ -54,8 +57,19 @@ export default function Energy() {
       </header>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MicrogridView {...({ gensets: mockGensets } as any)} />
-        <DispatchPanel recommendations={[]} />
+        <MicrogridView 
+          gensets={mockGensets as any}
+          pvOutput={125.5}
+          windOutput={80.2}
+          batterySoc={85}
+          batteryPower={-15}
+          totalLoad={280}
+          totalGeneration={295}
+        />
+        <DispatchPanel recommendations={[
+          { type: 'shed', title: 'Shed Sector 4 HVAC', description: 'Thermal mass is high enough to float for 2 hours.', savingsKw: 45, priority: 'medium' },
+          { type: 'optimize', title: 'Engage Battery Discharge', description: 'Peak wind expected in 3 hours, discharge BESS to avoid curtailment.', savingsKw: 120, priority: 'high' }
+        ]} suggestedGenset="G4" />
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

@@ -22,9 +22,24 @@ const mockInventoryItems = [
 ];
 
 const mockForecast = [
-  { date: '2026-10-01', predicted_quantity: 120000, threshold: 40000, confidence: 0.98 },
-  { date: '2026-11-01', predicted_quantity: 75000, threshold: 40000, confidence: 0.95 },
-  { date: '2026-12-01', predicted_quantity: 30000, threshold: 40000, confidence: 0.90 } // Crosses threshold
+  {
+    category: 'Aviation Turbine Fuel',
+    threshold: 40000,
+    data: [
+      { date: '2026-10-01', predicted_quantity: 120000, confidence: 0.98 },
+      { date: '2026-11-01', predicted_quantity: 75000, confidence: 0.95 },
+      { date: '2026-12-01', predicted_quantity: 30000, confidence: 0.90 }
+    ]
+  },
+  {
+    category: 'MRE Rations',
+    threshold: 2000,
+    data: [
+      { date: '2026-10-01', predicted_quantity: 8500, confidence: 0.98 },
+      { date: '2026-11-01', predicted_quantity: 7450, confidence: 0.95 },
+      { date: '2026-12-01', predicted_quantity: 6400, confidence: 0.90 }
+    ]
+  }
 ];
 
 export default function Logistics() {
