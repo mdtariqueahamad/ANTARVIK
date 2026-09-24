@@ -61,14 +61,14 @@ const Login: React.FC = () => {
         </a>
       </header>
 
-      <div className="flex-grow flex flex-col items-center justify-center z-10 px-4 mt-8">
+      <div className="flex-grow flex flex-col items-center justify-center z-10 px-4 mt-28 sm:mt-12 mb-8">
         
         <div className="bg-slate-950/25 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold mb-6 shadow-lg text-white">
           <Snowflake className="w-3 h-3" />
           SIH 2026 • Problem Statement 60
         </div>
 
-        <div className="bg-slate-950/40 backdrop-blur-md border border-white/15 rounded-2xl p-8 flex flex-col items-center shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] max-w-3xl w-full transition-all">
+        <div className="bg-slate-950/40 backdrop-blur-md border border-white/15 rounded-2xl p-6 sm:p-8 flex flex-col items-center shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] max-w-3xl w-full transition-all">
           
           {!selectedNode ? (
             <>
