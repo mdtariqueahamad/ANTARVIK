@@ -18,7 +18,7 @@ const Login: React.FC = () => {
       sessionStorage.setItem('token', 'mock_jwt_token_12345');
       sessionStorage.setItem('activeNode', node);
       sessionStorage.setItem('role', 'hq');
-      navigate('/dashboard'); // NCPOR has a gateway to view all stations
+      navigate('/gateway'); // NCPOR has a gateway to view all stations
     } else {
       setSelectedNode(node);
     }

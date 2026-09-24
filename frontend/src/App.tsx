@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import HQDashboard from './components/dashboard/HQDashboard';
 import StationOverview, { subscribeNotifications, NotifRow } from './components/dashboard/StationOverview';
 import type { Notification } from './components/dashboard/StationOverview';
+import GatewayPage from './pages/GatewayPage';
 import DigitalTwinView from './components/dashboard/DigitalTwinView';
 import Energy from './pages/Energy';
 import Logistics from './pages/Logistics';
@@ -198,11 +198,6 @@ type NavDef =
   | { kind: 'action'; id: string; label: string; Icon: React.ComponentType<{ className?: string }> };
 
 // ─── Main Layout ───────────────────────────────────────────────────────────────
-const DashboardWrapper = () => {
-  const location = useLocation();
-  const isHQ = sessionStorage.getItem('activeNode') === 'NCPOR' && !location.search.includes('edge=1');
-  return isHQ ? <HQDashboard /> : <StationOverview />;
-};
 
 const MainLayout = ({ children }: { children: JSX.Element }) => {
   const activeNode = sessionStorage.getItem('activeNode') || 'NCPOR';
@@ -238,8 +233,7 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   const NAV: NavDef[] = [
-    { kind: 'route',  path: '/dashboard', label: activeNode === 'NCPOR' ? 'HQ Gateway' : 'Overview', Icon: activeNode === 'NCPOR' ? Building2 : LayoutDashboard },
-    ...(activeNode === 'NCPOR' ? [{ kind: 'route', path: '/dashboard?edge=1', label: 'Station View', Icon: LayoutDashboard } as NavDef] : []),
+    { kind: 'route',  path: '/dashboard', label: 'Overview',         Icon: LayoutDashboard },
     { kind: 'route',  path: '/twin',      label: '3D Twin',          Icon: Box },
     { kind: 'route',  path: '/energy',    label: 'Energy',           Icon: Zap },
     { kind: 'route',  path: '/logistics', label: 'Inventory',        Icon: Package },
@@ -270,7 +264,7 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
   };
 
   const isNavActive = (item: NavDef) => {
-    if (item.kind === 'route') return location.pathname + location.search === item.path || (item.path === '/dashboard' && location.pathname === '/dashboard' && location.search === '');
+    if (item.kind === 'route') return location.pathname === item.path;
     if (item.id === 'ai-notifs') return aiPanelOpen;
     if (item.id === 'crit-alerts') return critPanelOpen;
     return false;
@@ -452,6 +446,18 @@ Note: This data is consolidated from the digital twin sync pipelines.
           {/* Right: station selector + logout */}
           <div className="flex items-center gap-2 shrink-0">
 
+            {/* Return to Gateway Button */}
+            {activeNode === 'NCPOR' && (
+              <motion.button
+                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+                onClick={() => navigate('/gateway')}
+                className="hidden md:flex items-center gap-2 px-3 py-2 mr-2 rounded-xl bg-white/5 border border-white/20 hover:bg-white/10 hover:border-white/30 transition-all text-xs font-bold uppercase tracking-widest text-white/80"
+              >
+                <Building2 className="w-4 h-4" />
+                Gateway
+              </motion.button>
+            )}
+
             {/* HQ Generate Report Button */}
             {activeNode === 'NCPOR' && (
               <motion.button
@@ -540,9 +546,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login"   element={<Login />} />
-        <Route path="/gateway" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/gateway" element={<ProtectedRoute><GatewayPage /></ProtectedRoute>} />
 
-        <Route path="/dashboard" element={<ProtectedRoute><MainLayout><DashboardWrapper /></MainLayout></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><MainLayout><StationOverview /></MainLayout></ProtectedRoute>} />
         <Route path="/twin"      element={<ProtectedRoute><MainLayout><DigitalTwinView /></MainLayout></ProtectedRoute>} />
         <Route path="/energy"    element={<ProtectedRoute><MainLayout><Energy /></MainLayout></ProtectedRoute>} />
         <Route path="/logistics" element={<ProtectedRoute><MainLayout><Logistics /></MainLayout></ProtectedRoute>} />
