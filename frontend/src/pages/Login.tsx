@@ -33,12 +33,12 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col relative overflow-hidden text-white font-sans"
+    <div className="min-h-screen w-screen bg-cover bg-center bg-no-repeat flex flex-col relative overflow-hidden text-white font-sans bg-fixed"
          style={{ backgroundImage: "url('/background.png')" }}>
       
       <div className="absolute inset-0 bg-slate-900/40 z-0 backdrop-blur-sm"></div>
 
-      <header className="absolute top-0 w-full flex justify-between items-center px-10 py-6 z-50">
+      <header className="absolute top-0 w-full flex justify-between items-center px-6 md:px-10 py-6 z-50">
         <div className="flex items-center gap-4">
           <div className="bg-slate-950/25 p-2 rounded-lg backdrop-blur-sm border border-white/10 shadow-lg">
             <Snowflake className="w-5 h-5 text-white" />
