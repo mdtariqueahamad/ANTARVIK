@@ -17,6 +17,24 @@ from app.schemas.station import (
 
 router = APIRouter(prefix="/stations", tags=["stations"])
 
+@router.get("/{station_id}/logistics/resupply")
+async def get_resupply_manifest(station_id: uuid.UUID):
+    """Mock endpoint for getting resupply manifest (Shipment details)."""
+    # Returns mock ship data
+    return [
+        {
+            "id": str(uuid.uuid4()),
+            "vessel": "SA Agulhas II" if str(station_id).startswith("1") else "Vasiliy Golovnin",
+            "departure_date": "2026-10-15T00:00:00Z",
+            "arrival_date": "2026-10-29T00:00:00Z",
+            "status": "in_transit",
+            "items": [
+                {"sku": "ATF-01", "name": "Aviation Turbine Fuel", "quantity": 120000, "unit": "L", "priority": "critical"},
+                {"sku": "HSD-02", "name": "High-Speed Diesel", "quantity": 250000, "unit": "L", "priority": "critical"}
+            ]
+        }
+    ]
+
 @router.get("", response_model=List[StationRead])
 async def list_stations():
     """List all stations."""
