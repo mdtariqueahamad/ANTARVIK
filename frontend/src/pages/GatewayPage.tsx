@@ -33,9 +33,7 @@ export default function GatewayPage() {
     <motion.div 
       initial={{ opacity: 0, y: 20 }} 
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,255,255,0.2)" }}
-      transition={{ duration: 0.2 }}
-      className="bg-white/5 border border-white/10 rounded-3xl flex flex-col relative overflow-hidden backdrop-blur-md cursor-pointer group origin-center h-full p-0"
+      className="bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300 rounded-3xl flex flex-col relative overflow-hidden backdrop-blur-md cursor-pointer group origin-center h-full p-0"
       onClick={() => handleSelectStation(id)}
     >
       {/* Prominent Image Header */}
@@ -108,41 +106,41 @@ export default function GatewayPage() {
 
         {/* Global Metrics Banner */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors cursor-default">
+          <div className="bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors duration-300 cursor-default">
             <div className="flex items-center gap-3 text-blue-300 mb-2">
               <Activity className="w-5 h-5" />
               <span className="text-[10px] uppercase tracking-widest font-bold">Network Sync</span>
             </div>
             <div className="text-2xl font-mono text-white font-bold">99.8%</div>
             <p className="text-xs text-blue-300/60 mt-1">Both nodes connected via DTN</p>
-          </motion.div>
+          </div>
           
-          <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors cursor-default">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors duration-300 cursor-default">
             <div className="flex items-center gap-3 text-emerald-300 mb-2">
               <Anchor className="w-5 h-5" />
               <span className="text-[10px] uppercase tracking-widest font-bold">Logistics</span>
             </div>
             <div className="text-2xl font-mono text-white font-bold">2 Active</div>
             <p className="text-xs text-emerald-300/60 mt-1">Vessels en-route to Antarctic</p>
-          </motion.div>
+          </div>
 
-          <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className="bg-purple-500/10 border border-purple-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors cursor-default">
+          <div className="bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 p-5 rounded-2xl backdrop-blur-md transition-colors duration-300 cursor-default">
             <div className="flex items-center gap-3 text-purple-300 mb-2">
               <Zap className="w-5 h-5" />
               <span className="text-[10px] uppercase tracking-widest font-bold">Total Energy</span>
             </div>
             <div className="text-2xl font-mono text-white font-bold">1.4 MW</div>
             <p className="text-xs text-purple-300/60 mt-1">Combined Grid Output</p>
-          </motion.div>
+          </div>
 
-          <motion.div whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }} transition={{ duration: 0.2 }} className={`p-5 rounded-2xl backdrop-blur-md transition-colors cursor-default ${alertCount > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-white/5 border border-white/10'}`}>
+          <div className={`p-5 rounded-2xl backdrop-blur-md transition-colors duration-300 cursor-default ${alertCount > 0 ? 'bg-red-500/10 hover:bg-red-500/20 border border-red-500/20' : 'bg-white/5 hover:bg-white/10 border border-white/10'}`}>
             <div className={`flex items-center gap-3 mb-2 ${alertCount > 0 ? 'text-red-300' : 'text-white/50'}`}>
               <ShieldAlert className="w-5 h-5" />
               <span className="text-[10px] uppercase tracking-widest font-bold">Active Incidents</span>
             </div>
             <div className="text-2xl font-mono text-white font-bold">{alertCount}</div>
             <p className="text-xs text-white/40 mt-1">Pending resolution</p>
-          </motion.div>
+          </div>
         </div>
 
         {/* Edge Nodes */}
