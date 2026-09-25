@@ -9,9 +9,25 @@ interface InventoryLedgerProps {
   items: InventoryItem[];
 }
 
-export default function InventoryLedger({ items }: InventoryLedgerProps) {
+export default function InventoryLedger({ items: initialItems }: InventoryLedgerProps) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>('all');
+  const [items, setItems] = useState(initialItems);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editQty, setEditQty] = useState<number>(0);
+  
+  const role = sessionStorage.getItem('role');
+  const canEdit = role === 'logistics';
+
+  const handleEdit = (item: any) => {
+    setEditingId(item.id);
+    setEditQty(item.quantity);
+  };
+
+  const handleSave = (id: string) => {
+    setItems(prev => prev.map(i => i.id === id ? { ...i, quantity: editQty, days_remaining: editQty / i.daily_consumption } : i));
+    setEditingId(null);
+  };
 
   const categories = ['all', ...new Set(items.map((i) => i.category))];
 

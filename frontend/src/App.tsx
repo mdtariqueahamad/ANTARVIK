@@ -7,6 +7,7 @@ import DigitalTwinView from './components/dashboard/DigitalTwinView';
 import Energy from './pages/Energy';
 import Logistics from './pages/Logistics';
 import Ships from './pages/Ships';
+import Personnel from './pages/Personnel';
 import IncidentCommand from './pages/IncidentCommand';
 import SensorCalibration from './pages/SensorCalibration';
 import ScenarioSimulator from './pages/ScenarioSimulator';
@@ -15,7 +16,7 @@ import { useStationStore } from './hooks/useStationStore';
 import {
   Building2, Snowflake, Wind, LogOut, ChevronDown, Menu, Activity,
   AlertTriangle, Bell, CheckCircle, LayoutDashboard, X, Box, ShieldAlert, Cpu,
-  Zap, Package, Anchor, FileText, Download
+  Zap, Package, Anchor, Users, FileText, Download
 } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import FloatingChatbot from './components/common/FloatingChatbot';
@@ -232,18 +233,28 @@ const MainLayout = ({ children }: { children: JSX.Element }) => {
     window.location.href = '/login';
   };
 
+  const role = sessionStorage.getItem('role') || 'general';
+
   const NAV: NavDef[] = [
     { kind: 'route',  path: '/dashboard', label: 'Overview',         Icon: LayoutDashboard },
     { kind: 'route',  path: '/twin',      label: '3D Twin',          Icon: Box },
-    { kind: 'route',  path: '/energy',    label: 'Energy',           Icon: Zap },
-    { kind: 'route',  path: '/logistics', label: 'Inventory',        Icon: Package },
-    { kind: 'route',  path: '/ships',     label: 'Ship Tracking',    Icon: Anchor },
-    { kind: 'route',  path: '/simulator', label: 'Simulator',        Icon: Activity },
+    // Energy only for HQ and Generator Operator
+    ...(['hq', 'commander', 'generator'].includes(role) ? [{ kind: 'route',  path: '/energy',    label: 'Energy',           Icon: Zap } as NavDef] : []),
+    // Logistics only for HQ and Logistics
+    ...(['hq', 'commander', 'logistics'].includes(role) ? [
+      { kind: 'route',  path: '/logistics', label: 'Inventory',        Icon: Package } as NavDef,
+      { kind: 'route',  path: '/ships',     label: 'Ship Tracking',    Icon: Anchor } as NavDef
+    ] : []),
+    // Personnel for HQ
+    ...(['hq', 'commander'].includes(role) ? [{ kind: 'route',  path: '/personnel', label: 'Personnel',        Icon: Users } as NavDef] : []),
+    // Simulator for HQ and Commanders
+    ...(['hq', 'commander'].includes(role) ? [{ kind: 'route',  path: '/simulator', label: 'Simulator',        Icon: Activity } as NavDef] : []),
+    // Node specific
     ...(activeNode === 'NCPOR' 
       ? [
           { kind: 'route',  path: '/incidents', label: 'Incident Command', Icon: ShieldAlert } as NavDef
         ]
-      : [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef]
+      : ['hq', 'commander'].includes(role) ? [{ kind: 'route',  path: '/sensors',   label: 'Sensor Management', Icon: Cpu } as NavDef] : []
     ),
     { kind: 'action', id: 'ai-notifs',   label: 'AI Notifications', Icon: Bell },
     { kind: 'action', id: 'crit-alerts', label: 'Critical Alerts',  Icon: AlertTriangle },
@@ -552,6 +563,7 @@ export default function App() {
         <Route path="/energy"    element={<ProtectedRoute><MainLayout><Energy /></MainLayout></ProtectedRoute>} />
         <Route path="/logistics" element={<ProtectedRoute><MainLayout><Logistics /></MainLayout></ProtectedRoute>} />
         <Route path="/ships"     element={<ProtectedRoute><MainLayout><Ships /></MainLayout></ProtectedRoute>} />
+        <Route path="/personnel" element={<ProtectedRoute><MainLayout><Personnel /></MainLayout></ProtectedRoute>} />
         <Route path="/simulator" element={<ProtectedRoute><MainLayout><ScenarioSimulator /></MainLayout></ProtectedRoute>} />
         <Route path="/sensors"   element={<ProtectedRoute><MainLayout><SensorCalibration /></MainLayout></ProtectedRoute>} />
         <Route path="/incidents" element={<ProtectedRoute><MainLayout><IncidentCommand /></MainLayout></ProtectedRoute>} />

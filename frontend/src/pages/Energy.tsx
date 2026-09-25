@@ -9,10 +9,9 @@ import { useStationStore } from '../hooks/useStationStore';
 
 // Mocks for energy page
 const mockGensets = [
-  { id: 'G1', name: 'Main Diesel Gen 1', status: 'running', output_kw: 120, capacity_kw: 150, fuel_rate_lph: 15, runtime_hours: 450, rul_hours: 1200 },
-  { id: 'G2', name: 'Main Diesel Gen 2', status: 'standby', output_kw: 0, capacity_kw: 150, fuel_rate_lph: 0, runtime_hours: 320, rul_hours: 4000 },
-  { id: 'G3', name: 'Backup Gen', status: 'maintenance', output_kw: 0, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 800, rul_hours: 0 },
-  { id: 'G4', name: 'Peaker Gen', status: 'running', output_kw: 90, capacity_kw: 100, fuel_rate_lph: 12, runtime_hours: 150, rul_hours: 5000 },
+  { id: 'G1', name: 'Generator 1', status: 'running', output_kw: 85, capacity_kw: 100, fuel_rate_lph: 12.5, runtime_hours: 450, rul_hours: 1200 },
+  { id: 'G2', name: 'Generator 2', status: 'standby', output_kw: 0, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 320, rul_hours: 4000 },
+  { id: 'G3', name: 'Generator 3', status: 'maintenance', output_kw: 0, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 800, rul_hours: 0 },
   { id: 'S1', name: 'Solar Array', status: 'running', output_kw: 45, capacity_kw: 50, fuel_rate_lph: 0, runtime_hours: 12000, rul_hours: 50000 },
   { id: 'W1', name: 'Wind Turbine', status: 'running', output_kw: 80, capacity_kw: 100, fuel_rate_lph: 0, runtime_hours: 8000, rul_hours: 20000 }
 ];

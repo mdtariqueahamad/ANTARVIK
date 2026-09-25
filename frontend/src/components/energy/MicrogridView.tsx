@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Zap, Sun, Wind, Battery, Activity } from 'lucide-react';
 import ProvenanceTooltip from '../common/ProvenanceTooltip';
 import StatusBadge from '../common/StatusBadge';
@@ -15,7 +16,7 @@ interface MicrogridViewProps {
 }
 
 export default function MicrogridView({
-  gensets,
+  gensets: initialGensets,
   pvOutput,
   windOutput,
   batterySoc,
@@ -23,6 +24,21 @@ export default function MicrogridView({
   totalLoad,
   totalGeneration,
 }: MicrogridViewProps) {
+  const role = sessionStorage.getItem('role');
+  const isOperator = role === 'generator';
+  const [gensets, setGensets] = useState(initialGensets);
+
+  const handleToggleState = (id: string) => {
+    if (!isOperator) return;
+    setGensets((prev: any[]) => prev.map((g: any) => {
+      if (g.id === id) {
+        if (g.status === 'running') return { ...g, status: 'standby', output_kw: 0, fuel_rate_lph: 0 };
+        if (g.status === 'standby') return { ...g, status: 'running', output_kw: g.capacity_kw * 0.8, fuel_rate_lph: 12.5 };
+      }
+      return g;
+    }));
+  };
+
   const balance = totalGeneration - totalLoad;
 
   return (
@@ -48,7 +64,7 @@ export default function MicrogridView({
         {/* Generation Sources */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Gensets */}
-          {gensets.map((g) => (
+          {gensets.map((g: any) => (
             <div
               key={g.id}
               className="p-3 rounded-lg border border-antarctic-border bg-antarctic-navy"
