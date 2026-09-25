@@ -81,63 +81,97 @@ export default function MicrogridView({
             <Sun className="w-3.5 h-3.5" /> Renewables & Storage System
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-black/40 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-white/20 transition-all shadow-md">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent opacity-50" />
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+            {/* Solar */}
+            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
                   <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="text-[10px] uppercase font-bold text-white/60 tracking-widest">Solar Array</span>
                 </div>
-                <span className="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Active</span>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Photovoltaic</span>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">Solar Array</span>
+                </div>
               </div>
-              <ProvenanceTooltip provenance="simulated">
-                <div className="text-3xl font-mono font-black text-white mb-1 drop-shadow-md">{formatPower(pvOutput)}</div>
-              </ProvenanceTooltip>
-              <div className="text-[10px] uppercase tracking-widest text-white/40 mt-2 flex justify-between">
-                <span>Irradiance</span>
-                <span className="text-white/70">Nominal</span>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Live Output</span>
+                  <ProvenanceTooltip provenance="simulated">
+                    <span className="text-base font-mono font-bold text-white">{formatPower(pvOutput)}</span>
+                  </ProvenanceTooltip>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
+                  <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Irradiance</span>
+                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Nominal</span>
+                </div>
               </div>
             </div>
             
-            <div className="bg-black/40 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-white/20 transition-all shadow-md">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+            {/* Wind */}
+            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
                   <Wind className="w-4 h-4 text-cyan-400" />
-                  <span className="text-[10px] uppercase font-bold text-white/60 tracking-widest">Wind Turbine</span>
                 </div>
-                <span className="text-[9px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Active</span>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Turbine</span>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">Wind Power</span>
+                </div>
               </div>
-              <ProvenanceTooltip provenance="simulated">
-                <div className="text-3xl font-mono font-black text-white mb-1 drop-shadow-md">{formatPower(windOutput)}</div>
-              </ProvenanceTooltip>
-              <div className="text-[10px] uppercase tracking-widest text-white/40 mt-2 flex justify-between">
-                <span>Wind Speed</span>
-                <span className="text-white/70">Optimal</span>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Live Output</span>
+                  <ProvenanceTooltip provenance="simulated">
+                    <span className="text-base font-mono font-bold text-white">{formatPower(windOutput)}</span>
+                  </ProvenanceTooltip>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
+                  <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Wind Speed</span>
+                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Optimal</span>
+                </div>
               </div>
             </div>
 
-            <div className="bg-black/40 border border-white/5 rounded-2xl p-5 relative overflow-hidden group hover:border-white/20 transition-all shadow-md">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent opacity-50" />
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
+            {/* BESS */}
+            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
+              <div className="flex items-center gap-3 mb-5">
+                <div className={`p-2 rounded-lg border ${batteryPower >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
                   {batteryPower >= 0 ? <BatteryCharging className="w-4 h-4 text-emerald-400" /> : <Battery className="w-4 h-4 text-amber-400" />}
-                  <span className="text-[10px] uppercase font-bold text-white/60 tracking-widest">BESS Storage</span>
                 </div>
-                <span className={`text-[9px] px-2 py-0.5 rounded border font-bold uppercase tracking-wider ${batteryPower >= 0 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
-                  {batteryPower >= 0 ? 'Charging' : 'Discharging'}
-                </span>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Energy Storage</span>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">BESS</span>
+                </div>
               </div>
-              <ProvenanceTooltip provenance="simulated">
-                <div className="flex items-end gap-3 mb-1">
-                  <span className="text-3xl font-mono font-black text-white drop-shadow-md">{formatPercent(batterySoc)}</span>
-                  <span className={`text-sm font-mono font-bold mb-1 ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">State of Charge</span>
+                  <ProvenanceTooltip provenance="simulated">
+                    <span className="text-base font-mono font-bold text-white">{formatPercent(batterySoc)}</span>
+                  </ProvenanceTooltip>
+                </div>
+                <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Flow Rate</span>
+                  <span className={`text-[11px] font-mono font-bold ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
                     {batteryPower >= 0 ? '+' : '-'}{formatPower(Math.abs(batteryPower))}
                   </span>
                 </div>
-              </ProvenanceTooltip>
-              <div className="w-full bg-white/10 h-1.5 rounded-full mt-3 overflow-hidden shadow-inner">
-                <div className={`h-full transition-all duration-1000 ${batterySoc > 20 ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' : 'bg-gradient-to-r from-red-500 to-red-400'}`} style={{ width: `${batterySoc}%` }} />
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                    {batteryPower >= 0 ? 'Charging' : 'Discharging'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
