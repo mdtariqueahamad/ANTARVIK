@@ -5,7 +5,7 @@ import { useStationStore } from '../../hooks/useStationStore';
 export default function FloatingChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'ai', text: string}[]>([
-    { role: 'ai', text: 'ANTARVIK AI Assistant online. I have access to station telemetry, ML predictions, and operational manuals. How can I help you today?' }
+    { role: 'ai', text: 'ANTARVIK AI Assistant online. Note: External LLM API connections are currently disabled due to rate limiting (HTTP 429). The RAG engine is running in fallback mode.' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
