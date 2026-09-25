@@ -10,7 +10,14 @@ message TelemetryReading {
   int64 timestamp_ms = 6;
 }
 
+message ChatMessage {
+  string sender = 1;
+  string content = 2;
+  int64 timestamp_ms = 3;
+}
+
 message TelemetryBatch {
   string station_code = 1;      // e.g. "MAITRI" or "BHARATI"
   repeated TelemetryReading readings = 2;
+  repeated ChatMessage chat_messages = 3;
 }

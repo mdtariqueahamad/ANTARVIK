@@ -20,7 +20,7 @@ async def init_db() -> None:
     
     # Import all models here to avoid circular imports
     from app.models.user import User
-    from app.models.station import Station, Asset, TelemetryReading
+    from app.models.station import Station, Asset, TelemetryReading, ChatLog
     from app.models.alert import Alert
     from app.models.inventory import InventoryItem, InventoryTransaction
     from app.models.scenario import Scenario, ScenarioAction
@@ -32,6 +32,7 @@ async def init_db() -> None:
             Station,
             Asset,
             TelemetryReading,
+            ChatLog,
             Alert,
             InventoryItem,
             InventoryTransaction,

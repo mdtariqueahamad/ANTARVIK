@@ -58,3 +58,13 @@ class TelemetryReading(Document):
 
     class Settings:
         name = "telemetry_readings"
+
+class ChatLog(Document):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    station_code: str
+    sender: str
+    content: str
+    timestamp: datetime = Field(default_factory=_utcnow)
+
+    class Settings:
+        name = "chat_logs"

@@ -482,40 +482,7 @@ Note: This data is consolidated from the digital twin sync pipelines.
               </motion.button>
             )}
 
-            {/* Station selector */}
-            <div className="relative">
-              <motion.button
-                onClick={() => activeNode === 'NCPOR' && setShowStationDropdown(s => !s)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-bold uppercase tracking-widest transition-all ${
-                  activeNode === 'NCPOR'
-                    ? 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/40 cursor-pointer'
-                    : 'bg-white/5 border-white/10 opacity-60 cursor-not-allowed'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full animate-pulse ${selectedStation === 'maitri' ? 'bg-cyan-400' : 'bg-indigo-400'}`} />
-                <span className="text-white">{selectedStation} Station</span>
-                {activeNode === 'NCPOR' && <ChevronDown className="w-3.5 h-3.5 text-white/50" />}
-              </motion.button>
 
-              {showStationDropdown && activeNode === 'NCPOR' && (
-                <div className="absolute right-0 mt-2 w-48 bg-slate-950/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl overflow-hidden z-50">
-                  {([
-                    { id: 'maitri',  label: 'Maitri Station',  Icon: Snowflake, color: 'text-cyan-400' },
-                    { id: 'bharati', label: 'Bharati Station', Icon: Wind,      color: 'text-indigo-400' },
-                  ] as const).map(({ id, label, Icon, color }) => (
-                    <button
-                      key={id}
-                      onClick={() => { setStation(id); setShowStationDropdown(false); }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${selectedStation === id ? 'bg-white/5' : ''}`}
-                    >
-                      <Icon className={`w-4 h-4 ${color}`} />
-                      <span className="text-white/90">{label}</span>
-                      {selectedStation === id && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Logout */}
             <motion.button

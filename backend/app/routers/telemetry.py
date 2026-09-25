@@ -124,5 +124,20 @@ async def dtn_sync(request: Request):
             metadata_json={"source": "dtn_sync", "station": station_code}
         )
         results.append(str(reading.id))
+
+    chat_synced = 0
+    from app.models.station import ChatLog
+    for pb_chat in batch.chat_messages:
+        try:
+            chat_log = ChatLog(
+                station_code=station_code,
+                sender=pb_chat.sender,
+                content=pb_chat.content,
+                timestamp=datetime.fromtimestamp(pb_chat.timestamp_ms / 1000.0, tz=timezone.utc)
+            )
+            await chat_log.insert()
+            chat_synced += 1
+        except Exception as e:
+            pass
         
-    return {"status": "ok", "synced_records": len(results), "station_code": station_code}
+    return {"status": "ok", "synced_records": len(results), "synced_chats": chat_synced, "station_code": station_code}
