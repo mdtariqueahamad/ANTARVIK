@@ -54,134 +54,120 @@ export default function MicrogridView({
   };
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md overflow-hidden relative shadow-2xl">
+    <div className="bg-[#0b101e] border border-white/10 rounded-3xl overflow-hidden relative shadow-2xl">
+      
+      {/* HEADER */}
       <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-black/40">
         <div className="flex items-center gap-4">
-          <div className="bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 p-2.5 rounded-xl border border-white/10 shadow-lg">
-            <Activity className="w-5 h-5 text-cyan-400" />
+          <div className="bg-blue-500/20 p-2.5 rounded-xl border border-blue-500/30">
+            <Activity className="w-5 h-5 text-blue-400" />
           </div>
           <div>
             <h3 className="text-sm font-black text-white tracking-widest uppercase">Microgrid Command State</h3>
-            <p className="text-[10px] text-white/50 tracking-widest uppercase mt-0.5">Live Telemetry & ML Predictions</p>
+            <p className="text-[10px] text-white/50 tracking-widest uppercase mt-0.5">Live Telemetry & Diagnostics</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 bg-black/60 px-5 py-2.5 rounded-xl border border-white/5 shadow-inner">
-          <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Grid Balance</span>
-          <span className={`text-lg font-black font-mono tracking-wider ${isDeficit ? 'text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]'}`}>
+        <div className="flex flex-col items-end">
+          <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold mb-1">Grid Balance</span>
+          <span className={`text-xl font-black font-mono tracking-wider ${isDeficit ? 'text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]' : 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]'}`}>
             {balance >= 0 ? '+' : ''}{formatPower(balance)}
           </span>
         </div>
       </div>
 
-      <div className="p-6 space-y-8">
+      <div className="p-6 space-y-10">
         
-        {/* Renewables & Storage */}
+        {/* BLOCK 1: RENEWABLES & STORAGE */}
         <div>
-          <h4 className="text-[10px] uppercase font-black text-white/40 tracking-widest mb-4 flex items-center gap-2">
-            <Sun className="w-3.5 h-3.5" /> Renewables & Storage System
+          <h4 className="text-xs uppercase font-black text-white/60 tracking-widest mb-6 flex items-center gap-2 border-b border-white/10 pb-3">
+            Renewables & Storage
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Solar */}
-            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                  <Sun className="w-4 h-4 text-amber-400" />
-                </div>
-                <div>
-                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Photovoltaic</span>
-                  <span className="block text-sm font-black text-white uppercase tracking-widest">Solar Array</span>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Live Output</span>
-                  <ProvenanceTooltip provenance="simulated">
-                    <span className="text-base font-mono font-bold text-white">{formatPower(pvOutput)}</span>
-                  </ProvenanceTooltip>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
-                  <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Irradiance</span>
-                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Nominal</span>
-                </div>
-              </div>
-            </div>
+          
+          <div className="flex flex-col gap-4">
             
-            {/* Wind */}
-            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-                  <Wind className="w-4 h-4 text-cyan-400" />
+            {/* Solar Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="flex items-center gap-4 mb-4 md:mb-0">
+                <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
+                  <Sun className="w-5 h-5 text-amber-400" />
                 </div>
                 <div>
-                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Turbine</span>
-                  <span className="block text-sm font-black text-white uppercase tracking-widest">Wind Power</span>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">Solar Photovoltaic Array</span>
+                  <span className="block text-[10px] text-white/40 tracking-wider mt-1">Monocrystalline panels optimized for high-albedo snow environments.</span>
                 </div>
               </div>
               
-              <div className="space-y-3">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Live Output</span>
-                  <ProvenanceTooltip provenance="simulated">
-                    <span className="text-base font-mono font-bold text-white">{formatPower(windOutput)}</span>
-                  </ProvenanceTooltip>
+              <div className="flex items-center gap-8 md:border-l md:border-white/10 md:pl-8">
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Live Output</span>
+                  <span className="text-xl font-mono font-bold text-white">{formatPower(pvOutput)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
-                  <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest">Active</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Wind Speed</span>
-                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Optimal</span>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Irradiance</span>
+                  <span className="text-sm font-bold text-emerald-400 uppercase tracking-widest">Nominal</span>
                 </div>
               </div>
             </div>
 
-            {/* BESS */}
-            <div className="flex flex-col bg-black/40 border border-white/5 rounded-2xl p-5 shadow-md">
-              <div className="flex items-center gap-3 mb-5">
-                <div className={`p-2 rounded-lg border ${batteryPower >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
-                  {batteryPower >= 0 ? <BatteryCharging className="w-4 h-4 text-emerald-400" /> : <Battery className="w-4 h-4 text-amber-400" />}
+            {/* Wind Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="flex items-center gap-4 mb-4 md:mb-0">
+                <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                  <Wind className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div>
-                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest">Energy Storage</span>
-                  <span className="block text-sm font-black text-white uppercase tracking-widest">BESS</span>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">Wind Turbine</span>
+                  <span className="block text-[10px] text-white/40 tracking-wider mt-1">Vertical-axis hybrid turbine engineered for severe katabatic winds.</span>
                 </div>
               </div>
               
-              <div className="space-y-3">
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">State of Charge</span>
-                  <ProvenanceTooltip provenance="simulated">
-                    <span className="text-base font-mono font-bold text-white">{formatPercent(batterySoc)}</span>
-                  </ProvenanceTooltip>
+              <div className="flex items-center gap-8 md:border-l md:border-white/10 md:pl-8">
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Live Output</span>
+                  <span className="text-xl font-mono font-bold text-white">{formatPower(windOutput)}</span>
                 </div>
-                <div className="flex justify-between items-center pb-2 border-b border-white/5">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Flow Rate</span>
-                  <span className={`text-[11px] font-mono font-bold ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Wind Speed</span>
+                  <span className="text-sm font-bold text-emerald-400 uppercase tracking-widest">Optimal</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Battery Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors">
+              <div className="flex items-center gap-4 mb-4 md:mb-0">
+                <div className={`p-3 rounded-xl border ${batteryPower >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
+                  {batteryPower >= 0 ? <BatteryCharging className="w-5 h-5 text-emerald-400" /> : <Battery className="w-5 h-5 text-amber-400" />}
+                </div>
+                <div>
+                  <span className="block text-sm font-black text-white uppercase tracking-widest">BESS Storage</span>
+                  <span className="block text-[10px] text-white/40 tracking-wider mt-1">Grid-forming Battery Energy Storage System for base-load smoothing.</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-8 md:border-l md:border-white/10 md:pl-8">
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Charge State</span>
+                  <span className="text-xl font-mono font-bold text-white">{formatPercent(batterySoc)}</span>
+                </div>
+                <div>
+                  <span className="block text-[9px] uppercase font-bold text-white/40 tracking-widest mb-1">Flow Rate</span>
+                  <span className={`text-xl font-mono font-bold ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
                     {batteryPower >= 0 ? '+' : '-'}{formatPower(Math.abs(batteryPower))}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-[9px] uppercase font-bold text-white/40 tracking-widest">Status</span>
-                  <span className={`text-[9px] font-bold uppercase tracking-widest ${batteryPower >= 0 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                    {batteryPower >= 0 ? 'Charging' : 'Discharging'}
-                  </span>
-                </div>
               </div>
             </div>
+
           </div>
         </div>
 
-        {/* Diesel Generators & ML Predictions */}
+        {/* BLOCK 2: PRIMARY GENERATION */}
         <div>
-          <h4 className="text-[10px] uppercase font-black text-white/40 tracking-widest mb-4 flex items-center gap-2">
-            <Cpu className="w-3.5 h-3.5" /> Primary Generation & AI Health Models
+          <h4 className="text-xs uppercase font-black text-white/60 tracking-widest mb-6 flex items-center gap-2 border-b border-white/10 pb-3">
+            Primary Generation
           </h4>
+          
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
             {gensets.map((g: any) => {
               const health = getGensetHealth(g.rul_hours);
@@ -199,7 +185,7 @@ export default function MicrogridView({
                   <div className="relative z-10">
                     <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg border ${isRunning ? 'bg-blue-500/20 border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/10 text-white/40'}`}>
+                        <div className={`p-2 rounded-lg border ${isRunning ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/10 text-white/40'}`}>
                           <Zap className="w-4 h-4" />
                         </div>
                         <div>
@@ -239,7 +225,7 @@ export default function MicrogridView({
                       {/* Predictive Metrics */}
                       <div className="space-y-4">
                         <div>
-                          <span className="block text-[9px] uppercase font-bold text-white/40 mb-2 tracking-widest">AI Failure Prediction</span>
+                          <span className="block text-[9px] uppercase font-bold text-white/40 mb-2 tracking-widest">Failure Prediction</span>
                           <div className={`flex items-center gap-2 p-2 rounded-lg border ${health.bg} ${health.border}`}>
                             <health.icon className={`w-3.5 h-3.5 ${health.color}`} />
                             <div className="flex flex-col">
@@ -263,7 +249,7 @@ export default function MicrogridView({
         </div>
 
         {/* Load Distribution Gauge */}
-        <div className="bg-gradient-to-r from-black/60 to-black/40 border border-white/10 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+        <div className="bg-gradient-to-r from-black/60 to-black/40 border border-white/10 p-6 rounded-2xl shadow-lg relative overflow-hidden mt-6">
           <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-indigo-500/10 to-transparent pointer-events-none" />
           
           <div className="flex justify-between items-end mb-4 relative z-10">
